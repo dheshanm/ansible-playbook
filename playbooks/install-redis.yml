@@ -1,0 +1,5 @@
+- name: Install & configure Redis
+  hosts: pnl-infisical-1
+  become: true
+  roles:
+    - redis

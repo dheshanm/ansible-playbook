@@ -1,0 +1,8 @@
+redis_repo_name: redis
+redis_repo_description: Redis
+# You can template major version if you want:
+# redis_repo_baseurl: "http://packages.redis.io/rpm/rockylinux{{ ansible_distribution_major_version }}"
+redis_repo_baseurl: "http://packages.redis.io/rpm/rockylinux9"
+redis_repo_gpgkey: "https://packages.redis.io/gpg"
+redis_package_name: redis
+redis_service_name: redis

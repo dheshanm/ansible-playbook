@@ -1,0 +1,27 @@
+# roles/redis/tasks/main.yml
+---
+- name: Add the official Redis YUM repository
+  ansible.builtin.yum_repository:
+    name: "{{ redis_repo_name }}"
+    description: "{{ redis_repo_description }}"
+    baseurl: "{{ redis_repo_baseurl }}"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "{{ redis_repo_gpgkey }}"
+
+- name: Import the Redis GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ redis_repo_gpgkey }}"
+
+- name: Install Redis package
+  ansible.builtin.dnf:
+    name: "{{ redis_package_name }}"
+    state: present
+    update_cache: yes
+
+- name: Ensure Redis service is enabled and started
+  ansible.builtin.systemd_service:
+    name: "{{ redis_service_name }}"
+    enabled: yes
+    state: started
