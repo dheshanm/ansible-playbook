@@ -5,14 +5,6 @@
     state: present
   tags: audit
 
-- name: Ensure auditd service is enabled & started
-  become: true
-  service:
-    name: auditd
-    enabled: true
-    state: started
-  tags: audit
-
 - name: Apply global auditd settings
   become: true
   community.general.ini_file:
@@ -70,3 +62,11 @@
     state: present
   loop: "{{ pam_files }}"
   tags: pam
+
+- name: Ensure auditd service is enabled & started
+  become: true
+  service:
+    name: auditd
+    enabled: true
+    state: started
+  tags: audit
