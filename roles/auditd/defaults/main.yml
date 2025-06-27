@@ -1,0 +1,25 @@
+sensitive_audit_files:
+  - /etc/shadow
+  - /etc/passwd
+  - /etc/group
+  - /etc/gshadow
+  - /etc/sudoers
+  - /var/log/secure
+  - /var/log/auth.log
+
+pam_files:
+  - /etc/pam.d/password-auth
+  - /etc/pam.d/system-auth
+
+auditd_settings:
+  log_file: /var/log/audit/audit.log
+  log_format: ENRICHED
+  flush: INR  # short for INCREMENTAL_ASYNC if you prefer
+  freq: "20"
+  max_log_file: "50"
+  num_logs: "15"
+  max_log_file_action: ROTATE
+  space_left_action: SYSLOG
+  admin_space_left_action: SYSLOG
+  disk_full_action: SYSLOG
+  disk_error_action: SYSLOG

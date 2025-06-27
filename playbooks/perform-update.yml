@@ -1,0 +1,6 @@
+- name: Apply system updates & handle reboots
+  hosts: all
+  become: true
+
+  roles:
+    - system-update

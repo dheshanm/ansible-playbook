@@ -1,0 +1,26 @@
+- block:
+    - name: Update DNF cache and all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+        exclude: "{{ dnf_exclude_packages }}"
+      register: dnf_update_result
+
+    - name: Display updated packages
+      ansible.builtin.debug:
+        msg: |
+          The following packages were updated or installed on {{ inventory_hostname }}:
+          {{ dnf_update_result.results | join('\n') }}
+      when: dnf_update_result.changed
+
+    - name: Remove unused packages (autoremove)
+      ansible.builtin.dnf:
+        autoremove: true
+      when: dnf_update_result.changed
+
+  rescue:
+    - name: DNF update failed
+      ansible.builtin.debug:
+        msg: "DNF update failed. Error: {{ ansible_failed_result.msg | default('N/A') }}"
+      failed_when: true

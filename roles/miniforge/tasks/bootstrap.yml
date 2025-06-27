@@ -1,0 +1,48 @@
+---
+- name: Check if Miniforge is already installed
+  stat:
+    path: "{{ miniforge_prefix }}/bin/conda"
+  register: conda_stat
+
+- name: Download Miniforge installer
+  get_url:
+    url: "{{ miniforge_url | trim }}"
+    dest: "{{ miniforge_installer | trim }}"
+    mode: "0755"
+    force: no
+  when: not conda_stat.stat.exists
+
+- name: Run Miniforge installer in batch mode
+  become: false
+  command: "{{ miniforge_installer }} -b -p {{ miniforge_prefix }}"
+  args:
+    creates: "{{ miniforge_prefix }}/bin/conda"
+  when: not conda_stat.stat.exists
+
+- name: Initialize conda in ~/.bashrc
+  become: false
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'eval "$({{ miniforge_prefix }}/bin/conda shell.bash hook)"'
+    insertafter: EOF
+  when: not conda_stat.stat.exists
+
+- name: Check if mamba is already installed
+  stat:
+    path: "{{ miniforge_prefix }}/bin/mamba"
+  register: mamba_stat
+
+- name: Install mamba into base conda env
+  become: false
+  shell: >
+    "{{ miniforge_prefix }}/bin/conda install -y mamba -n base -c conda-forge"
+  args:
+    executable: /bin/bash
+    creates: "{{ miniforge_prefix }}/bin/mamba"
+  when: conda_stat.stat.exists and not mamba_stat.stat.exists
+
+- name: Remove Miniforge installer script
+  file:
+    path: "{{ miniforge_installer }}"
+    state: absent
+  when: not conda_stat.stat.exists

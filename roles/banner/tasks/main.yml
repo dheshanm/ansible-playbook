@@ -1,0 +1,59 @@
+# roles/banner/tasks/main.yml
+
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Determine SSH service name
+  ansible.builtin.set_fact:
+    ssh_service: >-
+      {% if 'sshd.service' in ansible_facts.services %}
+        sshd.service
+      {% elif 'ssh.service' in ansible_facts.services %}
+        ssh.service
+      {% else %}
+        sshd.service
+      {% endif %}
+
+- name: Deploy console & SSH pre-login banners
+  become: true
+  ansible.builtin.template:
+    src: issue.j2
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - /etc/issue
+    - "{{ ssh_banner_path }}"
+  notify: restart ssh
+  tags: pre_login
+
+- name: Ensure sshd_config uses our banner
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*#?\s*Banner\s+'
+    line: "Banner {{ ssh_banner_path }}"
+  notify: restart ssh
+  tags: pre_login
+
+- name: Install interactive welcome script
+  become: true
+  ansible.builtin.template:
+    src: welcome.sh.j2
+    dest: /etc/profile.d/welcome.sh
+    owner: root
+    group: root
+    mode: "0755"
+  tags: post_login
+
+- name: Deploy dynamic motd script
+  become: true
+  ansible.builtin.template:
+    src: dynamic_motd.sh.j2
+    dest: /etc/profile.d/dynamic_motd.sh
+    owner: root
+    group: root
+    mode: "0755"
+  when: motd_dynamic
+  tags: post_login

@@ -1,0 +1,18 @@
+# Chrony configuration file
+
+# Where to record the rate of drift.
+driftfile /var/lib/chrony/drift
+
+# Allow the kernel to step the clock in the first three updates 
+# if the time is off by more than 1 second.
+makestep 1.0 3
+
+# Primary and secondary NTP servers
+server {{ chrony_primary }} iburst
+server {{ chrony_secondary }} iburst
+
+# Enable kernel synchronization of the real-time clock.
+rtcsync
+
+# Record measurements in log files.
+logdir /var/log/chrony

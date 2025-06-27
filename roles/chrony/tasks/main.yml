@@ -1,0 +1,27 @@
+- name: Install chrony package
+  become: true
+  package:
+    name: chrony
+    state: present
+
+- name: Deploy custom chrony.conf
+  become: true
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart chrony
+
+- name: Ensure chrony service is enabled & running
+  become: true
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+
+- name: Set system timezone
+  become: true
+  timezone:
+    name: "{{ timezone_name }}"

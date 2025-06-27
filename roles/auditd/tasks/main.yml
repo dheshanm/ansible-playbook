@@ -1,0 +1,72 @@
+- name: Install auditd package
+  become: true
+  package:
+    name: audit
+    state: present
+  tags: audit
+
+- name: Ensure auditd service is enabled & started
+  become: true
+  service:
+    name: auditd
+    enabled: true
+    state: started
+  tags: audit
+
+- name: Apply global auditd settings
+  become: true
+  community.general.ini_file:
+    path: /etc/audit/auditd.conf
+    no_extra_spaces: false
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ auditd_settings | dict2items }}"
+  register: auditd_conf_changes
+  tags: audit
+
+- name: Reload auditd if config changed
+  become: true
+  service:
+    name: auditd
+    state: reloaded
+  when: auditd_conf_changes.changed
+  failed_when: false
+  notify: hup auditd
+  tags: audit
+
+- name: Deploy logrotate policy for audit.log
+  become: true
+  template:
+    src: audit-logrotate.j2
+    dest: /etc/logrotate.d/audit
+    owner: root
+    group: root
+    mode: '0644'
+  tags: audit
+
+- name: Add watch rules for sensitive files
+  become: true
+  lineinfile:
+    path: /etc/audit/rules.d/local.rules
+    create: yes
+    line: "-w {{ item }} -p wa -k sensitive"
+    state: present
+  loop: "{{ sensitive_audit_files }}"
+  tags: audit
+
+- name: Reload audit rules
+  become: true
+  command: augenrules --load
+  notify: hup auditd
+  tags: audit
+
+- name: Enable PAM TTY auditing in password-auth & system-auth
+  become: true
+  lineinfile:
+    path: "{{ item }}"
+    regexp: '^session\s+required\s+pam_tty_audit\.so'
+    line: 'session required pam_tty_audit.so enable=*'
+    insertafter: EOF
+    state: present
+  loop: "{{ pam_files }}"
+  tags: pam

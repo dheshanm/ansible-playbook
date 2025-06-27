@@ -1,0 +1,10 @@
+galaxy_info:
+  author: Dheshan Mohandass <dmohandass@mgh.harvard.edu>
+  description: Role to manage auditd configuration and rules.
+  license: Unlicense
+  min_ansible_version: "${ansible_min_version}"
+
+  platforms:
+    - name: EL
+      versions:
+        - "9"

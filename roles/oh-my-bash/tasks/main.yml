@@ -1,0 +1,13 @@
+- include_tasks: os_pkgs.yml
+
+- name: Install Oh My Bash unattended
+  become: false
+  ansible.builtin.shell: >
+    "$(curl -fsSL {{ omb_installer_url }})" --unattended
+  args:
+    executable: /bin/bash
+    # prevents re-running if ~/.oh-my-bash already exists
+    creates: "{{ ansible_env.HOME }}/.oh-my-bash"
+  environment:
+    # force the installer to pick up the right HOME
+    HOME: "{{ ansible_env.HOME }}"

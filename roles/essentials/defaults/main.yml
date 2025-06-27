@@ -1,0 +1,8 @@
+essentials_packages:
+  - git
+  - vim
+  - curl
+  - wget
+  - tree
+  - tmux
+

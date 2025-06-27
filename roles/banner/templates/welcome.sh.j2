@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# only run in an interactive shell
+[[ -z "$PS1" ]] && return
+
+cat <<'EOH'
+Authorized users only. All activity is monitored.
+EOH
+
+echo "Welcome $(whoami)!"

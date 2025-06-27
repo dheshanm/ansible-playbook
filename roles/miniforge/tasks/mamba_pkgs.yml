@@ -1,0 +1,9 @@
+- name: Install all requested packages via mamba
+  become: false
+  shell: "{{ miniforge_prefix }}/bin/mamba install -y {{ conda_packages | join(' ') }} -n base -c conda-forge"
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "{{ miniforge_prefix }}/bin:{{ ansible_env.PATH }}"
+  when: conda_packages | length > 0
+  tags: mamba

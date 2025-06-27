@@ -1,0 +1,3 @@
+chrony_primary:  time.partners.org
+chrony_secondary: pool.ntp.org
+timezone_name:    America/New_York

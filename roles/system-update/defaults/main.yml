@@ -1,0 +1,5 @@
+# set to false for hosts that should never reboot
+allow_reboot: true
+
+# e.g. ['kernel*'] to exclude kernel updates
+dnf_exclude_packages: []

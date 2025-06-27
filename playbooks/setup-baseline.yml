@@ -1,0 +1,10 @@
+- name: Setup baseline configuration
+  hosts: all
+  roles:
+    - auditd
+    - chrony
+    - essentials
+    - oh-my-bash
+    - banner
+    - psacct
+    - miniforge

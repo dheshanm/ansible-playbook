@@ -1,0 +1,72 @@
+---
+- name: Rolling reboot for all hosts
+  hosts: all
+  gather_facts: false
+  serial: 1             # reboot one host at a time
+  any_errors_fatal: true
+  max_fail_percentage: 20
+  become: true
+
+  pre_tasks:
+    - name: Wait for SSH to be up
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+
+    - name: Gather minimal facts
+      ansible.builtin.setup:
+        gather_subset:
+          - network
+          - hardware
+
+  tasks:
+    - name: Notify about upcoming reboot
+      ansible.builtin.debug:
+        msg: "⏳ Rebooting {{ inventory_hostname }} in 5 seconds…"
+
+    - name: Broadcast warning to all users via wall
+      become: false
+      ansible.builtin.shell: |
+        wall <<-'EOF'
+        *** NOTICE: {{ inventory_hostname }} will reboot for maintenance. ***
+        Please save your work.
+        EOF
+      args:
+        executable: /bin/bash
+
+    - block:
+        - name: Reboot the system
+          ansible.builtin.reboot:
+            msg: "Reboot initiated by Ansible for patching"
+            pre_reboot_delay: 5
+            post_reboot_delay: 10
+            reboot_timeout: 600
+            test_command: whoami
+          register: reboot_result
+
+        - name: Wait for SSH port
+          ansible.builtin.wait_for:
+            host: "{{ inventory_hostname }}"
+            port: 22
+            timeout: 300
+            state: started
+          when: reboot_result.changed
+
+        - name: Wait for Ansible to reconnect
+          ansible.builtin.wait_for_connection:
+            timeout: 60
+          when: reboot_result.changed
+
+      rescue:
+        - name: Report reboot failure
+          ansible.builtin.fail:
+            msg: "❌ {{ inventory_hostname }} failed to reboot correctly."
+
+    - name: Confirm reboot
+      ansible.builtin.debug:
+        msg: "✅ {{ inventory_hostname }} successfully rebooted."
+      when: reboot_result.changed
+
+  post_tasks:
+    - name: All done on {{ inventory_hostname }}
+      ansible.builtin.debug:
+        msg: "🎉 Finished processing {{ inventory_hostname }}."

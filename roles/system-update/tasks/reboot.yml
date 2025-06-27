@@ -1,0 +1,26 @@
+- name: Reboot if a kernel update was applied
+  ansible.builtin.reboot:
+    msg: "Rebooting after kernel updates"
+    connect_timeout: 5
+    reboot_timeout: 600
+  when:
+    - allow_reboot | bool
+    - dnf_update_result is defined
+    - dnf_update_result.results
+      | select('match','^kernel.*')
+      | list
+      | length > 0
+
+- name: Wait for host to come back online
+  ansible.builtin.wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 600
+  when:
+    - allow_reboot | bool
+    - dnf_update_result is defined
+    - dnf_update_result.results
+      | select('match','^kernel.*')
+      | list
+      | length > 0

@@ -1,0 +1,6 @@
+---
+- name: Install OS packages needed for oh-my-bash
+  become: true
+  package:
+    name: "{{ bootstrap_packages }}"
+    state: present

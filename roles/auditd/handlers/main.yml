@@ -1,0 +1,8 @@
+- name: hup auditd
+  become: true
+  # fallback HUP if systemd reload doesn’t work
+  shell: |
+    if pid=$(pidof auditd); then
+      kill -HUP $pid
+    fi
+  tags: audit

@@ -1,0 +1,2 @@
+ssh_banner_path: /etc/issue.net
+motd_dynamic: true

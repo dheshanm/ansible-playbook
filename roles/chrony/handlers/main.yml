@@ -1,0 +1,5 @@
+- name: restart chrony
+  become: true
+  service:
+    name: chronyd
+    state: restarted

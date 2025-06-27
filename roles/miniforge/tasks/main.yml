@@ -1,0 +1,3 @@
+- include_tasks: os_pkgs.yml
+- include_tasks: bootstrap.yml
+- include_tasks: mamba_pkgs.yml

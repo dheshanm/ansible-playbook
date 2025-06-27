@@ -1,0 +1,6 @@
+/.ansible
+
+/keys
+/logs
+
+/inventories/dev
