@@ -1,0 +1,56 @@
+# roles/infisical/tasks/main.yml
+
+- name: Ensure DNF cache is up-to-date (RedHat family)
+  when: ansible_facts.os_family == "RedHat"
+  dnf:
+    update_cache: yes
+
+- name: Download Infisical repo installer
+  get_url:
+    url: "{{ infisical_repo_script_url }}"
+    dest: "{{ infisical_repo_script_dest }}"
+    mode: '0755'
+
+- name: Configure Infisical YUM/DNF repo
+  command:
+    cmd: bash "{{ infisical_repo_script_dest }}"
+  args:
+    creates: "/etc/yum.repos.d/cloudsmith-infisical-*-infisical-core.repo"
+
+- name: Install Infisical package
+  package:
+    name: "{{ infisical_pkg }}"
+    state: present
+
+- name: Create Infisical config dir
+  file:
+    path: "{{ infisical_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy Infisical configuration
+  template:
+    src: infisical.rb.j2
+    dest: "{{ infisical_config_file }}"
+    owner: root
+    group: root
+    mode: '0640'
+  notify: Reconfigure Infisical
+
+- name: Ensure Infisical service is enabled & running
+  service:
+    name: "{{ infisical_service_name }}"
+    state: started
+    enabled: yes
+  ignore_errors: true
+
+- name: Verify Infisical status
+  command: infisical-ctl status
+  register: infisical_status
+  changed_when: false
+
+- name: Show Infisical status
+  debug:
+    var: infisical_status.stdout_lines

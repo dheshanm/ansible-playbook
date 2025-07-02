@@ -1,0 +1,3 @@
+---
+infisical_install_script_url: "https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.rpm.sh"
+infisical_package_name: "infisical"

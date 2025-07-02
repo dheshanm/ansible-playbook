@@ -1,0 +1,17 @@
+---
+- name: “Download & run Infisical repo-setup script”
+  become: true
+  ansible.builtin.shell: |
+    curl -1sLf '{{ infisical_install_script_url }}' | bash -E
+  args:
+    executable: /bin/bash
+  register: infisical_repo
+  changed_when: infisical_repo.rc == 0
+  # You can add a check to skip if the repo already exists,
+  # or inspect /etc/yum.repos.d if you want more idempotence.
+
+- name: “Install Infisical CLI”
+  become: true
+  ansible.builtin.package:
+    name: "{{ infisical_package_name }}"
+    state: present

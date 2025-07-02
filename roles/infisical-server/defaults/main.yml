@@ -1,0 +1,6 @@
+infisical_repo_script_url:     "https://dl.cloudsmith.io/public/infisical/infisical-core/setup.rpm.sh"
+infisical_repo_script_dest:    "/tmp/setup_infisical_repo.sh"
+infisical_pkg:                 "infisical-core"
+infisical_config_dir:          "/etc/infisical"
+infisical_config_file:         "{{ infisical_config_dir }}/infisical.rb"
+infisical_service_name:        "infisical"

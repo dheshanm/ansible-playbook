@@ -1,0 +1,2 @@
+- name: Reconfigure Infisical
+  command: infisical-ctl reconfigure

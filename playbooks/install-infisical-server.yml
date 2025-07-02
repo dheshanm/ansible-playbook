@@ -1,0 +1,5 @@
+- name: Install & configure Infisical
+  hosts: pnl-infisical-1
+  become: true
+  roles:
+    - infisical-server

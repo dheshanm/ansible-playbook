@@ -1,0 +1,6 @@
+# /etc/infisical/infisical.rb
+# Managed by Ansible. DO NOT EDIT by hand.
+infisical_core['ENCRYPTION_KEY']   = '{{ infisical_encryption_key }}'
+infisical_core['AUTH_SECRET']      = '{{ infisical_auth_secret }}'
+infisical_core['DB_CONNECTION_URI']= '{{ infisical_db_uri }}'
+infisical_core['REDIS_URL']        = '{{ infisical_redis_url }}'
