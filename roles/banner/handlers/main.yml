@@ -1,4 +1,5 @@
 - name: restart ssh
+  become: true
   ansible.builtin.service:
     name: "{{ ssh_service | trim }}"
     state: restarted

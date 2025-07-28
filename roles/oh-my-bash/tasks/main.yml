@@ -3,7 +3,7 @@
 - name: Install Oh My Bash unattended
   become: false
   ansible.builtin.shell: >
-    "$(curl -fsSL {{ omb_installer_url }})" --unattended
+    curl -fsSL {{ omb_installer_url }} | bash -s -- --unattended
   args:
     executable: /bin/bash
     # prevents re-running if ~/.oh-my-bash already exists
