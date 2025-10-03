@@ -1,0 +1,3 @@
+---
+step_ca_url: "https://stepca.example.org:443"
+step_ca_fingerprint: "<your-step-ca-fingerprint-here>"

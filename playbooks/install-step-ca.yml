@@ -1,0 +1,5 @@
+- name: Install Step CA
+  hosts: all
+  become: true
+  roles:
+    - step-ca

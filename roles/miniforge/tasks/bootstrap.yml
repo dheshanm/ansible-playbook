@@ -12,6 +12,19 @@
     force: no
   when: not conda_stat.stat.exists
 
+- name: Configure .condarc for anaconda.mgb.org domain
+  become: false
+  copy:
+    dest: "{{ ansible_env.HOME }}/.condarc"
+    content: |
+      channels:
+        - conda-forge
+        - bioconda
+      solver: libmamba
+      ssl_verify: false
+      channel_alias: https://anaconda.mgb.org/
+  when: not conda_stat.stat.exists
+
 - name: Run Miniforge installer in batch mode
   become: false
   command: "{{ miniforge_installer }} -b -p {{ miniforge_prefix }}"

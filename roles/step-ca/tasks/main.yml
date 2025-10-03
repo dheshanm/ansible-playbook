@@ -1,0 +1,38 @@
+---
+# tasks file for step-ca
+- name: Add Smallstep repository
+  ansible.builtin.yum_repository:
+    name: smallstep
+    description: Smallstep
+    baseurl: https://packages.smallstep.com/stable/fedora/
+    enabled: true
+    gpgcheck: true
+    repo_gpgcheck: false
+    gpgkey: https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
+
+- name: Install step-cli and step-ca
+  ansible.builtin.dnf:
+    name:
+      - step-cli
+      - step-ca
+    state: present
+    update_cache: true
+
+- name: Bootstrap step CA configuration (Root User)
+  ansible.builtin.shell: |
+    step ca bootstrap --ca-url {{ step_ca_url }} --fingerprint {{ step_ca_fingerprint }}
+  args:
+    creates: "{{ ansible_env.HOME }}/.step/config/defaults.json"
+  become: true
+
+- name: Bootstrap step CA configuration
+  ansible.builtin.shell: |
+    step ca bootstrap --ca-url {{ step_ca_url }} --fingerprint {{ step_ca_fingerprint }}
+  args:
+    creates: "{{ ansible_env.HOME }}/.step/config/defaults.json"
+  become: false
+
+- name: Install CA root certificate
+  ansible.builtin.shell: |
+    step certificate install $(step path)/certs/root_ca.crt
+  become: true
