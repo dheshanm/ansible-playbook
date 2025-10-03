@@ -9,6 +9,7 @@
     gpgcheck: true
     repo_gpgcheck: false
     gpgkey: https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
+  become: true
 
 - name: Install step-cli and step-ca
   ansible.builtin.dnf:
@@ -17,6 +18,7 @@
       - step-ca
     state: present
     update_cache: true
+  become: true
 
 - name: Bootstrap step CA configuration (Root User)
   ansible.builtin.shell: |
