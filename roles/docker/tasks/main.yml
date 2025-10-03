@@ -1,0 +1,69 @@
+- name: Install required kernel module packages
+  become: true
+  dnf:
+    name:
+      - kernel-modules
+      - kernel-modules-extra
+    state: present
+
+- name: Remove old Docker versions
+  become: true
+  dnf:
+    name: "{{ uninstall_docker_packages }}"
+    state: absent
+
+- name: Install dnf-plugins-core
+  become: true
+  dnf:
+    name: dnf-plugins-core
+    state: present
+
+- name: Add Docker repository
+  become: true
+  command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo
+
+- name: Install Docker packages
+  become: true
+  dnf:
+    name: "{{ install_docker_packages }}"
+    state: present
+
+- name: Ensure required kernel modules for Docker networking are loaded
+  become: true
+  ansible.builtin.modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - br_netfilter
+    - nf_nat
+    - xt_addrtype
+    - overlay
+
+- name: Enable and start Docker service
+  become: true
+  systemd:
+    name: docker
+    enabled: true
+    state: started
+
+- name: Enable containerd service
+  become: true
+  systemd:
+    name: containerd
+    enabled: true
+    state: started
+
+- name: Ensure docker group exists
+  become: true
+  group:
+    name: docker
+    state: present
+
+- name: Add pnl user to docker group
+  become: true
+  user:
+    name: "{{ add_docker_user }}"
+    groups: docker
+    append: yes

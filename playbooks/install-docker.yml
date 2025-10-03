@@ -1,0 +1,6 @@
+---
+- name: Install and configure Docker on Rocky Linux 10
+  hosts: all
+  become: true
+  roles:
+    - docker
