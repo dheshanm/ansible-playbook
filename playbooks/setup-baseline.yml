@@ -8,4 +8,5 @@
     - banner
     - psacct
     - miniforge
+    - uv
     - step-ca

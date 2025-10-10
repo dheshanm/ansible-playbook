@@ -1,0 +1,24 @@
+- name: Ensure dependencies are installed
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ prerequisites }}"
+    state: present
+
+- name: Install uv using official script
+  become: false
+  ansible.builtin.shell: |
+    curl -LsSf {{ install_script }} | sh
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.local/bin/uv"
+  environment:
+    HOME: "{{ ansible_env.HOME }}"
+
+- name: Add uv bash completion to ~/.bashrc
+  become: false
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'eval "$(uv generate-shell-completion bash)"'
+    insertafter: EOF
+    state: present
+

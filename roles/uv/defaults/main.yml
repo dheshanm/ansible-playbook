@@ -1,0 +1,5 @@
+install_script: https://astral.sh/uv/install.sh
+
+prerequisites:
+  - curl
+  - bash
