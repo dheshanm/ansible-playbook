@@ -4,21 +4,36 @@
     name: "{{ prerequisites }}"
     state: present
 
-- name: Install uv using official script
-  become: false
+- name: Install uv system-wide using official script
+  become: true
   ansible.builtin.shell: |
-    curl -LsSf {{ install_script }} | sh
+    curl -LsSf {{ install_script }} | env UV_INSTALL_DIR="{{ uv_install_dir }}" sh
   args:
     executable: /bin/bash
-    creates: "{{ ansible_env.HOME }}/.local/bin/uv"
-  environment:
-    HOME: "{{ ansible_env.HOME }}"
+    creates: "{{ uv_install_dir }}/uv"
 
-- name: Add uv bash completion to ~/.bashrc
-  become: false
+- name: Add uv bash completion to oh-my-bash system bashrc
+  become: true
   ansible.builtin.lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
+    path: /usr/local/share/oh-my-bash/bashrc
     line: 'eval "$(uv generate-shell-completion bash)"'
     insertafter: EOF
     state: present
+    create: true
+
+- name: Add uv bash completion to all existing users' .bashrc if using oh-my-bash
+  become: true
+  ansible.builtin.shell: |
+    for user_home in /home/*; do
+      if [ -f "$user_home/.bashrc" ]; then
+        if grep -q 'oh-my-bash' "$user_home/.bashrc"; then
+          if ! grep -q 'uv generate-shell-completion bash' "$user_home/.bashrc"; then
+            echo 'eval "$(uv generate-shell-completion bash)"' >> "$user_home/.bashrc"
+          fi
+        fi
+      fi
+    done
+  args:
+    executable: /bin/bash
+  when: ansible_facts['os_family'] != 'Darwin'
 
