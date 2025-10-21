@@ -1,13 +1,41 @@
+
 - include_tasks: os_pkgs.yml
 
-- name: Install Oh My Bash unattended
-  become: false
+- name: Install Oh My Bash system-wide
+  become: true
   ansible.builtin.shell: >
-    curl -fsSL {{ omb_installer_url }} | bash -s -- --unattended
+    curl -fsSL {{ omb_installer_url }} | bash -s -- --unattended --prefix=/usr/local
   args:
     executable: /bin/bash
-    # prevents re-running if ~/.oh-my-bash already exists
-    creates: "{{ ansible_env.HOME }}/.oh-my-bash"
-  environment:
-    # force the installer to pick up the right HOME
-    HOME: "{{ ansible_env.HOME }}"
+    creates: /usr/local/share/oh-my-bash
+
+- name: Copy Oh My Bash bashrc to /etc/skel/.bashrc
+  become: true
+  ansible.builtin.copy:
+    src: /usr/local/share/oh-my-bash/bashrc
+    dest: /etc/skel/.bashrc
+    owner: root
+    group: root
+    mode: '0644'
+    remote_src: true
+
+- name: Configure Oh My Bash for existing users
+  become: true
+  ansible.builtin.shell: |
+    for user_home in /home/*; do
+      if [ -d "$user_home" ]; then
+        user=$(basename "$user_home")
+        if [ -f "$user_home/.bashrc" ]; then
+          if grep -q 'oh-my-bash' "$user_home/.bashrc"; then
+            echo "Oh My Bash already configured for $user"
+            continue
+          fi
+        fi
+        cp /usr/local/share/oh-my-bash/bashrc "$user_home/.bashrc"
+        chown "$user:$user" "$user_home/.bashrc"
+        echo "Oh My Bash configured for $user"
+      fi
+    done
+  args:
+    executable: /bin/bash
+  when: ansible_facts['os_family'] != 'Darwin'
