@@ -1,0 +1,31 @@
+---
+- name: Create authselect profile for kanidm
+  ansible.builtin.command:
+    cmd: >
+      authselect create-profile kanidm
+      -b sssd
+  args:
+    creates: /etc/authselect/custom/kanidm
+  become: true
+  tags: ['kanidm:authselect']
+
+- name: Copy authselect profile files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/authselect/custom/kanidm/{{ item.dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - { src: 'pam.d/nssswitch.conf.j2', dest: 'nsswitch.conf' }
+    - { src: 'pam.d/password-auth.j2', dest: 'password-auth' }
+    - { src: 'pam.d/system-auth.j2', dest: 'system-auth' }
+  become: true
+  tags: ['kanidm:authselect']
+
+- name: Apply authselect profile for kanidm
+  ansible.builtin.command:
+    cmd: >
+      authselect select custom/kanidm
+  become: true
+  tags: ['kanidm:authselect']

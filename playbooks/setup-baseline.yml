@@ -10,3 +10,4 @@
     - miniforge
     - uv
     - step-ca
+    - cargo

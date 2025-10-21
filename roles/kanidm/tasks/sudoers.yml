@@ -1,0 +1,9 @@
+- name: Copy sudoers file for pnl-admin group
+  become: true
+  ansible.builtin.template:
+    src: sudoers.d/pnl-admin.j2
+    dest: /etc/sudoers.d/pnl-admin
+    owner: root
+    group: root
+    mode: '0440'
+  tags: ['kanidm:sudoers']

@@ -1,0 +1,8 @@
+---
+- name: Add kanidm repository
+  ansible.builtin.get_url:
+    url: "{{ kanidm_repo_url }}"
+    dest: /etc/yum.repos.d/network-idm.repo
+    mode: '0644'
+  become: true
+  tags: ['kanidm:repo']

@@ -1,0 +1,34 @@
+
+---
+
+- name: Include kanidm repository tasks
+  ansible.builtin.import_tasks: repo.yml
+  tags: [kanidm, 'kanidm:repo']
+
+- name: Include kanidm package installation tasks
+  ansible.builtin.import_tasks: packages.yml
+  tags: [kanidm, 'kanidm:packages']
+
+- name: Include kanidm configuration tasks
+  ansible.builtin.import_tasks: config.yml
+  tags: [kanidm, 'kanidm:config']
+
+- name: Include authselect profile tasks
+  ansible.builtin.import_tasks: authselect.yml
+  tags: [kanidm, 'kanidm:authselect']
+
+- name: Include SELinux policy tasks
+  ansible.builtin.import_tasks: selinux.yml
+  tags: [kanidm, 'kanidm:selinux']
+
+- name: Include sudoers configuration tasks
+  ansible.builtin.import_tasks: sudoers.yml
+  tags: [kanidm, 'kanidm:sudoers']
+
+- name: Include SSH configuration tasks
+  ansible.builtin.import_tasks: ssh.yml
+  tags: [kanidm, 'kanidm:ssh']
+
+- name: Include kanidm service management tasks
+  ansible.builtin.import_tasks: services.yml
+  tags: [kanidm, 'kanidm:services']

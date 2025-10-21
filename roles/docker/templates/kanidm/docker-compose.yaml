@@ -1,0 +1,22 @@
+services:
+  kanidm:
+    image: kanidm/server:latest
+    container_name: "kanidm"
+    hostname: kanidm
+    restart: unless-stopped
+    user: "1001:1001"
+    ports:
+      - "443:443"    # HTTPS
+      - "636:636"    # LDAP over TLS
+    cap_add:
+      - NET_BIND_SERVICE
+    volumes:
+      - ./data:/data  # Persistent storage to a local directory
+    environment:
+      - RUST_LOG=info
+    networks:
+      - kanidm-network
+
+networks:
+  kanidm-network:
+    driver: bridge

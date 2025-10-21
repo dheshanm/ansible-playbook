@@ -1,0 +1,36 @@
+---
+- name: Install kanidm-unixd-clients
+  ansible.builtin.dnf:
+    name: kanidm-unixd-clients
+    state: present
+  become: true
+  tags: ['kanidm:packages']
+
+- name: Ensure gcc is installed for Rust linker
+  ansible.builtin.dnf:
+    name: gcc
+    state: present
+  become: true
+  tags: ['kanidm:packages']
+
+- name: Ensure OpenSSL development libraries are installed
+  ansible.builtin.dnf:
+    name: openssl-devel
+    state: present
+  become: true
+  tags: ['kanidm:packages']
+
+- name: Ensure libudev development libraries are installed
+  ansible.builtin.dnf:
+    name: libudev-devel
+    state: present
+  become: true
+  tags: ['kanidm:packages']
+
+- name: Install kanidm_tools with cargo
+  ansible.builtin.command:
+    cmd: cargo install kanidm_tools
+  args:
+    creates: /usr/local/cargo/bin/kanidm
+  become: true
+  tags: ['kanidm:packages']

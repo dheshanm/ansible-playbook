@@ -1,0 +1,46 @@
+---
+# Install SELinux Policy
+- name: Copy SELinux policy template
+  ansible.builtin.template:
+    src: kanidm_policy.te
+    dest: /tmp/kanidm_policy.te
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  tags: ['kanidm:selinux']
+
+- name: Compile SELinux policy module
+  ansible.builtin.command:
+    cmd: checkmodule -M -m -o /tmp/kanidm_policy.mod /tmp/kanidm_policy.te
+  args:
+    creates: /tmp/kanidm_policy.mod
+  become: true
+  tags: ['kanidm:selinux']
+
+- name: Package SELinux policy module
+  ansible.builtin.command:
+    cmd: semodule_package -o /tmp/kanidm_policy.pp -m /tmp/kanidm_policy.mod
+  args:
+    creates: /tmp/kanidm_policy.pp
+  become: true
+  tags: ['kanidm:selinux']
+
+- name: Install SELinux policy module
+  ansible.builtin.command:
+    cmd: semodule -i /tmp/kanidm_policy.pp
+  become: true
+  register: semodule_result
+  changed_when: semodule_result.rc == 0
+  tags: ['kanidm:selinux']
+
+- name: Clean up temporary SELinux policy files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/kanidm_policy.te
+    - /tmp/kanidm_policy.mod
+    - /tmp/kanidm_policy.pp
+  become: true
+  tags: ['kanidm:selinux']

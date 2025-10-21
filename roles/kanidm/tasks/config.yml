@@ -1,0 +1,20 @@
+---
+- name: Copy unixd configuration file
+  ansible.builtin.template:
+    src: unixd.j2
+    dest: /etc/kanidm/unixd
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  tags: ['kanidm:config']
+
+- name: Copy kanidm configuration file
+  ansible.builtin.template:
+    src: kanidm_config.j2
+    dest: /etc/kanidm/config
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  tags: ['kanidm:config']

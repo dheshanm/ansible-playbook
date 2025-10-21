@@ -1,0 +1,17 @@
+---
+- name: Start and enable kanidm-unixd service
+  ansible.builtin.systemd:
+    name: kanidm-unixd
+    state: started
+    enabled: true
+  become: true
+  tags: ['kanidm:services']
+
+- name: start and enable `kanidm-unixd-tasks` service
+  ansible.builtin.systemd:
+    name: kanidm-unixd-tasks
+    state: started
+    enabled: true
+  become: true
+  tags: ['kanidm:services']
+

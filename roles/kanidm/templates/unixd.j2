@@ -1,0 +1,19 @@
+## Kanidm Unixd Service Configuration - /etc/kanidm/unixd
+
+version = '2'
+
+default_shell = "/bin/bash"
+home_prefix = "/home/"
+
+home_attr = "name"
+home_alias = "name"
+uid_attr_map = "name"
+gid_attr_map = "name"
+
+use_etc_skel = true
+
+# ========================================
+# This section enables the Kanidm provider
+[kanidm]
+
+pam_allowed_login_groups = ["posixusers"]

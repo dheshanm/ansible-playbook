@@ -1,0 +1,52 @@
+---
+# Configure SSH Key Authentication
+- name: Ensure SSHD config for kanidm key-based login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PubkeyAuthentication'
+    line: 'PubkeyAuthentication yes'
+    state: present
+    create: false
+    backup: true
+  become: true
+  tags: ['kanidm:ssh']
+
+- name: Ensure UsePAM is enabled in sshd_config
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^UsePAM'
+    line: 'UsePAM yes'
+    state: present
+    create: false
+    backup: true
+  become: true
+  tags: ['kanidm:ssh']
+
+- name: Set AuthorizedKeysCommand for kanidm
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AuthorizedKeysCommand '
+    line: 'AuthorizedKeysCommand /usr/sbin/kanidm_ssh_authorizedkeys %u'
+    state: present
+    create: false
+    backup: true
+  become: true
+  tags: ['kanidm:ssh']
+
+- name: Set AuthorizedKeysCommandUser for kanidm
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AuthorizedKeysCommandUser '
+    line: 'AuthorizedKeysCommandUser nobody'
+    state: present
+    create: false
+    backup: true
+  become: true
+  tags: ['kanidm:ssh']
+
+- name: Restart SSHD to apply kanidm SSH configuration
+  ansible.builtin.systemd:
+    name: sshd
+    state: restarted
+  become: true
+  tags: ['kanidm:ssh']
