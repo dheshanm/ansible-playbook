@@ -1,6 +1,6 @@
 ---
 miniforge_version: "latest"
-miniforge_prefix: "{{ ansible_env.HOME }}/miniforge3"
+miniforge_prefix: "/opt/miniforge3"
 miniforge_installer_dir: "/tmp"
 miniforge_installer: "{{ miniforge_installer_dir }}/Miniforge3-{{ ansible_system|lower }}-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x86_64', ansible_architecture) }}.sh"
 miniforge_url: "https://github.com/conda-forge/miniforge/releases/{{ miniforge_version }}/download/{{ miniforge_installer | basename | trim }}"

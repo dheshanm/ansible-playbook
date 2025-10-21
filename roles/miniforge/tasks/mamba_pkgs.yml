@@ -1,5 +1,5 @@
 - name: Install all requested packages via mamba
-  become: false
+  become: true
   shell: "{{ miniforge_prefix }}/bin/mamba install -y {{ conda_packages | join(' ') }} -n base -c conda-forge"
   args:
     executable: /bin/bash

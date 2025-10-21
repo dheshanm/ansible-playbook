@@ -5,6 +5,7 @@
   register: conda_stat
 
 - name: Download Miniforge installer
+  become: true
   get_url:
     url: "{{ miniforge_url | trim }}"
     dest: "{{ miniforge_installer | trim }}"
@@ -12,33 +13,52 @@
     force: no
   when: not conda_stat.stat.exists
 
-- name: Configure .condarc for anaconda.mgb.org domain
-  become: false
-  copy:
-    dest: "{{ ansible_env.HOME }}/.condarc"
-    content: |
-      channels:
-        - conda-forge
-        - bioconda
-      solver: libmamba
-      ssl_verify: false
-      channel_alias: https://anaconda.mgb.org/
-  when: not conda_stat.stat.exists
+- name: Create /etc/skel/.condarc for new users
+  become: true
+  template:
+    src: "condarc.j2"
+    dest: "/etc/skel/.condarc"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure root has .condarc
+  become: true
+  template:
+    src: "condarc.j2"
+    dest: "/root/.condarc"
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Run Miniforge installer in batch mode
-  become: false
+  become: true
   command: "{{ miniforge_installer }} -b -p {{ miniforge_prefix }}"
   args:
     creates: "{{ miniforge_prefix }}/bin/conda"
   when: not conda_stat.stat.exists
 
-- name: Initialize conda in ~/.bashrc
-  become: false
+- name: Ensure conda init in /etc/skel/.bashrc for new users
+  become: true
   lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
+    path: "/etc/skel/.bashrc"
     line: 'eval "$({{ miniforge_prefix }}/bin/conda shell.bash hook)"'
     insertafter: EOF
-  when: not conda_stat.stat.exists
+    create: true
+
+- name: Optionally add system-wide conda init via profile.d
+  become: true
+  copy:
+    dest: "/etc/profile.d/miniforge.sh"
+    owner: root
+    group: root
+    mode: "0755"
+    content: |
+      #!/bin/sh
+      # Miniforge system-wide initialization
+      if [ -x "{{ miniforge_prefix }}/bin/conda" ]; then
+        eval "$({{ miniforge_prefix }}/bin/conda shell.sh hook)"
+      fi
 
 - name: Check if mamba is already installed
   stat:
@@ -46,7 +66,7 @@
   register: mamba_stat
 
 - name: Install mamba into base conda env
-  become: false
+  become: true
   shell: >
     "{{ miniforge_prefix }}/bin/conda install -y mamba -n base -c conda-forge"
   args:
@@ -55,7 +75,36 @@
   when: conda_stat.stat.exists and not mamba_stat.stat.exists
 
 - name: Remove Miniforge installer script
+  become: true
   file:
     path: "{{ miniforge_installer }}"
     state: absent
   when: not conda_stat.stat.exists
+
+# Handle existing users: ensure .condarc and bash init in their home directories
+- name: Find existing user home directories under /home
+  become: true
+  find:
+    paths: "/home"
+    file_type: directory
+    depth: 1
+  register: user_homes
+
+- name: Ensure existing users have .condarc
+  become: true
+  become_user: "{{ item.path | basename }}"
+  template:
+    src: "condarc.j2"
+    dest: "{{ item.path }}/.condarc"
+    mode: "0644"
+  loop: "{{ user_homes.files | default([]) }}"
+
+- name: Ensure existing users have conda init in ~/.bashrc
+  become: true
+  become_user: "{{ item.path | basename }}"
+  lineinfile:
+    path: "{{ item.path }}/.bashrc"
+    line: 'eval "$({{ miniforge_prefix }}/bin/conda shell.bash hook)"'
+    insertafter: EOF
+    create: true
+  loop: "{{ user_homes.files | default([]) }}"
