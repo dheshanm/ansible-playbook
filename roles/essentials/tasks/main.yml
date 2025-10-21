@@ -1,3 +1,9 @@
+- name: Install EPEL repository
+  become: true
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+
 - name: Install essential packages
   become: true
   ansible.builtin.dnf:

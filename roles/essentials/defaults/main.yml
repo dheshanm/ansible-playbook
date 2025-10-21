@@ -7,4 +7,5 @@ essentials_packages:
   - tmux
   - pcp
   - python3-pcp
+  - htop
 
