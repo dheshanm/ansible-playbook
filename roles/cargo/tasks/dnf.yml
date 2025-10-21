@@ -1,0 +1,5 @@
+- name: Install rust and cargo
+  become: true
+  package:
+    name: rust, cargo
+    state: present

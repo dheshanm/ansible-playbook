@@ -1,0 +1,5 @@
+
+---
+
+- name: Include rustup installation tasks
+  ansible.builtin.import_tasks: rustup.yml

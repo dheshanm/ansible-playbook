@@ -1,0 +1,5 @@
+cargo_home: /usr/local/cargo
+rustup_home: /usr/local/rustup
+
+rustup_toolchain: stable
+rustup_profile: default

@@ -1,0 +1,3 @@
+# Ansible managed: Add Cargo/Rust binaries to sudo secure_path
+# This ensures that cargo, rustc, and other Rust tools are available when using sudo
+Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:{{ cargo_home }}/bin

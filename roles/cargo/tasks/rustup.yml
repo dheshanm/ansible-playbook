@@ -1,0 +1,70 @@
+---
+# Install Cargo (Rustup) system-wide for all users
+- name: Install Cargo (Rustup) system-wide
+  become: true
+  ansible.builtin.shell: |
+    export CARGO_HOME={{ cargo_home }}
+    export RUSTUP_HOME={{ rustup_home }}
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
+  args:
+    creates: "{{ cargo_home }}/bin/cargo"
+  register: cargo_install
+  changed_when: cargo_install.rc == 0 and cargo_install.stdout is search('Rust is installed')
+
+- name: Add Cargo bin to system-wide PATH via /etc/profile.d
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/profile.d/cargo.sh
+    content: |
+      export CARGO_HOME={{ cargo_home }}
+      export RUSTUP_HOME={{ rustup_home }}
+      export PATH="$CARGO_HOME/bin:$PATH"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add Cargo PATH to /etc/skel/.bashrc for new users
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/skel/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Cargo"
+    block: |
+      # Cargo (Rust) configuration
+      export CARGO_HOME={{ cargo_home }}
+      export RUSTUP_HOME={{ rustup_home }}
+      export PATH="$CARGO_HOME/bin:$PATH"
+    insertafter: EOF
+    create: no
+
+- name: Add Cargo PATH to existing user .bashrc files
+  become: true
+  ansible.builtin.blockinfile:
+    path: "{{ item }}/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Cargo"
+    block: |
+      # Cargo (Rust) configuration
+      export CARGO_HOME={{ cargo_home }}
+      export RUSTUP_HOME={{ rustup_home }}
+      export PATH="$CARGO_HOME/bin:$PATH"
+    insertafter: EOF
+    create: no
+  with_fileglob:
+    - /home/*/.bashrc
+  failed_when: false
+
+- name: Ensure sudo includes Cargo bin in secure_path (sudoers.d drop-in)
+  become: true
+  ansible.builtin.template:
+    src: sudoers_cargo_path.j2
+    dest: /etc/sudoers.d/10-cargo-path
+    owner: root
+    group: root
+    mode: '0440'
+    validate: 'visudo -cf %s'
+
+- name: initialize toolchain for root user
+  become: true
+  ansible.builtin.shell: |
+    rustup {{ rustup_profile }} {{ rustup_toolchain }}
+  args:
+    creates: "/root/.rustup/toolchains/{{ rustup_toolchain }}-x86_64-unknown-linux-gnu"
