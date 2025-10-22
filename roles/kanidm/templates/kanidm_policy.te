@@ -8,6 +8,9 @@ require {
     type systemd_userdbd_t;
     type auditd_t;
     type setroubleshootd_t;
+    type systemd_logind_t;
+    type chkpwd_t;
+    type local_login_t;
     class unix_stream_socket { read write connect connectto };
     class sock_file { write getattr };
 }
@@ -31,3 +34,15 @@ allow auditd_t unconfined_service_t:unix_stream_socket { read write connect conn
 # Allow setroubleshootd to access the socket
 allow setroubleshootd_t var_run_t:sock_file write;
 allow setroubleshootd_t unconfined_service_t:unix_stream_socket { read write connect connectto };
+
+# Allow systemd-logind to access the socket
+allow systemd_logind_t var_run_t:sock_file write;
+allow systemd_logind_t unconfined_service_t:unix_stream_socket { read write connect connectto };
+
+# Allow chkpwd to access the socket
+allow chkpwd_t var_run_t:sock_file write;
+allow chkpwd_t unconfined_service_t:unix_stream_socket { read write connect connectto };
+
+# Allow local_login to access the socket
+allow local_login_t var_run_t:sock_file write;
+allow local_login_t unconfined_service_t:unix_stream_socket { read write connect connectto };
