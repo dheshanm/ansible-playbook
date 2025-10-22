@@ -1,0 +1,44 @@
+---
+- name: Install GNOME Desktop Environment
+  hosts: all
+  become: true
+  
+  tasks:
+    - name: Include GNOME role
+      ansible.builtin.include_role:
+        name: gnome
+      vars:
+        # Enable VM optimizations for cloud instances
+        gnome_vm_optimizations: true
+        gnome_disable_animations: true
+        
+        # Use X11 instead of Wayland for better VNC compatibility
+        gnome_wayland_enable: false
+        
+        # Install optional packages
+        gnome_optional_packages:
+          - firefox
+          - gnome-terminal
+          - nautilus
+          - gedit
+          - gnome-calculator
+        
+        # Enable graphical target
+        gnome_enable_graphical_target: true
+        gnome_set_default_target: true
+        
+        # Enable GDM
+        gnome_enable_gdm: true
+
+    - name: Notify about reboot requirement
+      ansible.builtin.debug:
+        msg: |
+          GNOME Desktop has been installed successfully!
+          
+          Next steps:
+          1. Reboot the system to start the graphical environment
+          2. Connect via console (VNC/SPICE) to access the GUI
+          3. Log in with your user credentials
+          
+          To reboot now, run:
+          ansible-playbook -i inventories/dev/hosts.yml playbooks/reboot.yml -l {{ inventory_hostname }}

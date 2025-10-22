@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  author: pnl
+  description: Install and configure GNOME desktop environment on Rocky Linux
+  company: ""
+  license: MIT
+  min_ansible_version: "2.9"
+  
+  platforms:
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+
+  galaxy_tags:
+    - gnome
+    - desktop
+    - gui
+    - rocky
+    - rhel
+
+dependencies: []

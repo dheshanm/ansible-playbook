@@ -7,7 +7,7 @@
     - oh-my-bash
     - banner
     - psacct
-    - miniforge
+    # - miniforge
     - uv
     - step-ca
     - cargo

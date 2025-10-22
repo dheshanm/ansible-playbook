@@ -1,0 +1,59 @@
+---
+# Package installation tasks for GNOME
+
+- name: Install GNOME desktop group
+  become: true
+  ansible.builtin.dnf:
+    name: "@{{ item }}"
+    state: present
+  loop: "{{ gnome_groups }}"
+  register: gnome_group_install
+  async: 1800  # 30 minutes timeout for large group installation
+  poll: 10
+
+- name: Install additional GNOME packages
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ gnome_packages }}"
+    state: present
+  when: gnome_packages | length > 0
+
+- name: Install optional GNOME packages
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ gnome_optional_packages }}"
+    state: present
+  when: gnome_optional_packages | length > 0
+  ignore_errors: true  # Some packages might not be available
+
+- name: Install GNOME extensions
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ gnome_extensions }}"
+  when: gnome_extensions | length > 0
+  ignore_errors: true  # Extensions often have dependency issues
+  register: extension_install_result
+
+- name: Display extension installation warnings
+  ansible.builtin.debug:
+    msg: "Warning: Failed to install {{ item.item }} - {{ item.msg | default('Unknown error') }}"
+  loop: "{{ extension_install_result.results | default([]) }}"
+  when:
+    - extension_install_result is defined
+    - item.failed | default(false)
+  loop_control:
+    label: "{{ item.item | default('unknown') }}"
+
+- name: Ensure GNOME Shell is installed
+  become: true
+  ansible.builtin.dnf:
+    name: gnome-shell
+    state: present
+
+- name: Ensure GDM is installed
+  become: true
+  ansible.builtin.dnf:
+    name: gdm
+    state: present

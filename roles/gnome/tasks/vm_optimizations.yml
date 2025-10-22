@@ -1,0 +1,50 @@
+---
+# VM-specific optimizations for GNOME
+
+- name: Install SPICE guest agent for better VM integration
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - spice-vdagent
+      - qemu-guest-agent
+    state: present
+  ignore_errors: true  # Might not be needed on all hypervisors
+
+- name: Enable SPICE vdagent service
+  become: true
+  ansible.builtin.systemd:
+    name: spice-vdagentd
+    enabled: true
+    state: started
+  ignore_errors: true
+
+- name: Enable QEMU guest agent service
+  become: true
+  ansible.builtin.systemd:
+    name: qemu-guest-agent
+    enabled: true
+    state: started
+  ignore_errors: true
+
+- name: Install VirtIO drivers and tools
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - libvirt-client
+      - virt-what
+    state: present
+  ignore_errors: true
+
+- name: Configure kernel parameters for VM performance
+  become: true
+  ansible.builtin.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_set: true
+    reload: true
+  loop:
+    - { key: 'vm.swappiness', value: '10' }
+    - { key: 'vm.dirty_ratio', value: '10' }
+    - { key: 'vm.dirty_background_ratio', value: '5' }
+  ignore_errors: true

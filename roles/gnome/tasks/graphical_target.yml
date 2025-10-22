@@ -1,0 +1,31 @@
+---
+# Graphical target configuration tasks
+
+- name: Set default systemd target to graphical
+  become: true
+  ansible.builtin.systemd:
+    name: graphical.target
+    enabled: true
+  when: gnome_enable_graphical_target | bool
+
+- name: Set graphical.target as default
+  become: true
+  ansible.builtin.command:
+    cmd: systemctl set-default graphical.target
+  when: gnome_set_default_target | bool
+  changed_when: false
+  register: set_default_target_result
+  failed_when:
+    - set_default_target_result.rc != 0
+    - "'Created symlink' not in set_default_target_result.stderr"
+
+- name: Get current default target
+  become: true
+  ansible.builtin.command:
+    cmd: systemctl get-default
+  register: current_default_target
+  changed_when: false
+
+- name: Display current default target
+  ansible.builtin.debug:
+    msg: "Current default target is: {{ current_default_target.stdout }}"

@@ -1,0 +1,9 @@
+---
+# Handlers for GNOME role
+
+- name: restart gdm
+  become: true
+  ansible.builtin.systemd:
+    name: gdm
+    state: restarted
+  listen: restart gdm

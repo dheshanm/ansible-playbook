@@ -1,0 +1,57 @@
+---
+# GDM (GNOME Display Manager) configuration tasks
+
+- name: Enable and start GDM service
+  become: true
+  ansible.builtin.systemd:
+    name: gdm
+    enabled: "{{ gnome_enable_gdm }}"
+    state: started
+  when: gnome_enable_gdm | bool
+
+- name: Configure automatic login
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gdm/custom.conf
+    regexp: '^#?AutomaticLoginEnable='
+    line: "AutomaticLoginEnable=true"
+    state: present
+  when:
+    - gnome_enable_autologin | bool
+    - gnome_autologin_user | length > 0
+  notify: restart gdm
+
+- name: Configure automatic login user
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gdm/custom.conf
+    regexp: '^#?AutomaticLogin='
+    line: "AutomaticLogin={{ gnome_autologin_user }}"
+    state: present
+    insertafter: 'AutomaticLoginEnable='
+  when:
+    - gnome_enable_autologin | bool
+    - gnome_autologin_user | length > 0
+  notify: restart gdm
+
+- name: Disable Wayland if configured
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gdm/custom.conf
+    regexp: '^#?WaylandEnable='
+    line: "WaylandEnable=false"
+    insertafter: '^\[daemon\]'
+    state: present
+  when: not gnome_wayland_enable | bool
+  notify: restart gdm
+
+- name: Enable Wayland if configured
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gdm/custom.conf
+    regexp: '^#?WaylandEnable='
+    line: "WaylandEnable=true"
+    insertafter: '^\[daemon\]'
+    state: present
+  when: gnome_wayland_enable | bool
+  notify: restart gdm

@@ -1,0 +1,45 @@
+---
+# GNOME settings configuration tasks
+
+- name: Ensure user exists
+  ansible.builtin.assert:
+    that:
+      - gnome_user | length > 0
+    fail_msg: "gnome_user must be set when gnome_configure_user_settings is true"
+  when: gnome_configure_user_settings | bool
+
+- name: Get user information
+  become: true
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ gnome_user }}"
+  when: gnome_configure_user_settings | bool
+
+- name: Set user home directory
+  ansible.builtin.set_fact:
+    gnome_user_home: "{{ getent_passwd[gnome_user][4] }}"
+  when: gnome_configure_user_settings | bool
+
+- name: Disable animations for better VM performance
+  become: true
+  become_user: "{{ gnome_user }}"
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/enable-animations"
+    value: "false"
+    state: present
+  when:
+    - gnome_configure_user_settings | bool
+    - gnome_disable_animations | bool
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ getent_passwd[gnome_user][1] }}/bus"
+
+- name: Configure favorite apps in dash
+  become: true
+  become_user: "{{ gnome_user }}"
+  community.general.dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    value: "['firefox.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop']"
+    state: present
+  when: gnome_configure_user_settings | bool
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ getent_passwd[gnome_user][1] }}/bus"

@@ -1,0 +1,49 @@
+---
+# Default variables for GNOME desktop installation
+
+# GNOME package groups to install
+gnome_groups:
+  - "Server with GUI"
+
+# Additional GNOME packages
+gnome_packages:
+  - gnome-tweaks
+  - gnome-extensions-app
+  - dconf-editor
+  - glib2-devel  # For dconf compilation
+
+# Optional productivity packages (may have dependency issues)
+gnome_optional_packages:
+  - firefox
+  - gnome-terminal
+  - nautilus
+  - gedit
+
+# Extensions (these often have dependency issues and are truly optional)
+gnome_extensions:
+  - gnome-shell-extension-appindicator
+  - gnome-shell-extension-dash-to-dock
+
+# System settings
+gnome_enable_graphical_target: true
+gnome_set_default_target: true
+
+# GDM (GNOME Display Manager) settings
+gnome_enable_gdm: true
+gnome_allow_remote_desktop: false
+
+# User session settings (optional)
+# Set these if you want to configure specific user preferences
+gnome_configure_user_settings: false
+gnome_user: ""
+
+# Automatic login settings (not recommended for production)
+gnome_enable_autologin: false
+gnome_autologin_user: ""
+
+# Display settings
+gnome_wayland_enable: true
+
+# Performance tuning for VMs
+gnome_disable_animations: true
+gnome_vm_optimizations: true

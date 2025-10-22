@@ -1,0 +1,34 @@
+---
+# Main tasks file for GNOME desktop installation on Rocky Linux
+
+- name: Include package installation tasks
+  ansible.builtin.import_tasks: packages.yml
+  tags:
+    - gnome
+    - packages
+
+- name: Include GDM configuration tasks
+  ansible.builtin.import_tasks: gdm.yml
+  tags:
+    - gnome
+    - gdm
+
+- name: Include graphical target configuration tasks
+  ansible.builtin.import_tasks: graphical_target.yml
+  tags:
+    - gnome
+    - target
+
+- name: Include GNOME settings configuration tasks
+  ansible.builtin.import_tasks: settings.yml
+  when: gnome_configure_user_settings | bool
+  tags:
+    - gnome
+    - settings
+
+- name: Include VM optimizations
+  ansible.builtin.import_tasks: vm_optimizations.yml
+  when: gnome_vm_optimizations | bool
+  tags:
+    - gnome
+    - vm-optimization
