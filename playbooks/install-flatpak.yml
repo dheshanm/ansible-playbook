@@ -1,0 +1,6 @@
+---
+- name: Install Flatpak
+  hosts: all
+  roles:
+    - flatpak
+
