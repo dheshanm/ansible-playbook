@@ -1,0 +1,4 @@
+---
+
+- name: Install Visual Studio Code (Legacy)
+  ansible.builtin.import_tasks: legacy.yml

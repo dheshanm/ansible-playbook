@@ -1,0 +1,6 @@
+---
+- name: Install VS Code
+  hosts: all
+  roles:
+    - vscode
+

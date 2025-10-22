@@ -1,0 +1,29 @@
+- name: Install Visual Studio Code
+  become: true
+  block:
+    - name: Uninstall existing Visual Studio Code
+      ansible.builtin.dnf:
+        name: code
+        state: absent
+
+    - name: Import Microsoft GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Download Visual Studio Code 1.98.2 RPM
+      ansible.builtin.get_url:
+        url: https://update.code.visualstudio.com/1.98.2/linux-rpm-x64/stable
+        dest: /tmp/vscode-1.98.2.rpm
+        mode: '0644'
+
+    - name: Install Visual Studio Code 1.98.2 from RPM
+      ansible.builtin.dnf:
+        name: /tmp/vscode-1.98.2.rpm
+        state: present
+        disable_gpg_check: false
+
+    - name: Clean up downloaded RPM
+      ansible.builtin.file:
+        path: /tmp/vscode-1.98.2.rpm
+        state: absent
