@@ -1,0 +1,7 @@
+---
+# Handlers for NoMachine role
+
+- name: restart nxserver
+  ansible.builtin.service:
+    name: "{{ nomachine_service_name }}"
+    state: restarted

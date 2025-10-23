@@ -1,0 +1,20 @@
+- name: Install and configure NoMachine
+  hosts: all
+  become: true
+  roles:
+    - flatpak
+    - role: gnome
+      vars:
+        gnome_vm_optimizations: true
+        gnome_disable_animations: true
+        gnome_wayland_enable: false
+        gnome_optional_packages:
+          - firefox
+          - gnome-terminal
+          - nautilus
+          - gedit
+          - gnome-calculator
+        gnome_enable_graphical_target: true
+        gnome_set_default_target: true
+        gnome_enable_gdm: true
+    - nomachine

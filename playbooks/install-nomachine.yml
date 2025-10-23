@@ -1,0 +1,5 @@
+- name: Install and configure NoMachine
+  hosts: all
+  become: true
+  roles:
+    - nomachine

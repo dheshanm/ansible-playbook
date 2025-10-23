@@ -1,0 +1,28 @@
+# Default variables for the NoMachine role
+
+# Versioning and download details
+nomachine_series: "9.1"                  # Used in URL path: /download/<series>/Linux/
+nomachine_version: "9.1.24_6"            # Full version used in RPM filename
+nomachine_arch: "x86_64"
+nomachine_download_base_url: "https://web9001.nomachine.com/download"
+
+# Constructed values
+nomachine_package: "nomachine_{{ nomachine_version }}_{{ nomachine_arch }}.rpm"
+nomachine_package_url: "{{ nomachine_download_base_url }}/{{ nomachine_series }}/Linux/{{ nomachine_package }}"
+
+# Installation options
+nomachine_disable_gpg_check: true         # Some environments require disabling GPG check for vendor RPMs
+
+# Configuration
+nomachine_config_path: "/usr/NX/etc/server.cfg"
+nomachine_update_frequency: 0             # Never prompt for update
+nomachine_enable_lock_screen: 1           # Lock screen upon disconnect
+nomachine_physical_desktop_access_no_acceptance: "administrator,trusted,owner,system"
+nomachine_enable_local_network_broadcast: 0  # v9
+nomachine_enable_network_broadcast: 0        # v8
+nomachine_connections_user_limit: 1
+nomachine_virtual_desktops_user_limit: 1
+nomachine_disconnected_session_expiry: 259200  # 3 days
+
+# Service name (as installed by NoMachine)
+nomachine_service_name: "nxserver"

@@ -1,0 +1,89 @@
+---
+# Install and configure NoMachine idempotently on RedHat-family systems
+
+- name: Download NoMachine RPM
+  ansible.builtin.get_url:
+    url: "{{ nomachine_package_url }}"
+    dest: "/var/tmp/{{ nomachine_package }}"
+    mode: "0644"
+    force: false
+
+- name: Install NoMachine from local RPM (dnf)
+  ansible.builtin.dnf:
+    name: "/var/tmp/{{ nomachine_package }}"
+    state: present
+    disable_gpg_check: "{{ nomachine_disable_gpg_check }}"
+  notify: restart nxserver
+
+- name: Ensure nxserver service is enabled and started
+  ansible.builtin.service:
+    name: "{{ nomachine_service_name }}"
+    state: started
+    enabled: true
+
+# Configure /usr/NX/etc/server.cfg to desired values
+
+- name: Configure UpdateFrequency (never prompt for updates)
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?UpdateFrequency\b.*'
+    line: "UpdateFrequency {{ nomachine_update_frequency }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Configure EnableLockScreen (lock on disconnect)
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?EnableLockScreen\b.*'
+    line: "EnableLockScreen {{ nomachine_enable_lock_screen }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Configure PhysicalDesktopAccessNoAcceptance (include system)
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?PhysicalDesktopAccessNoAcceptance\b.*'
+    line: "PhysicalDesktopAccessNoAcceptance {{ nomachine_physical_desktop_access_no_acceptance }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Disable local network broadcast (v9 key)
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?EnableLocalNetworkBroadcast\b.*'
+    line: "EnableLocalNetworkBroadcast {{ nomachine_enable_local_network_broadcast }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Disable network broadcast (v8 key)
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?EnableNetworkBroadcast\b.*'
+    line: "EnableNetworkBroadcast {{ nomachine_enable_network_broadcast }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Limit concurrent connections per user
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?ConnectionsUserLimit\b.*'
+    line: "ConnectionsUserLimit {{ nomachine_connections_user_limit }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Limit concurrent virtual desktops per user
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?VirtualDesktopsUserLimit\b.*'
+    line: "VirtualDesktopsUserLimit {{ nomachine_virtual_desktops_user_limit }}"
+    backrefs: false
+  notify: restart nxserver
+
+- name: Expire disconnected sessions after 3 days
+  ansible.builtin.lineinfile:
+    path: "{{ nomachine_config_path }}"
+    regexp: '^#?DisconnectedSessionExpiry\b.*'
+    line: "DisconnectedSessionExpiry {{ nomachine_disconnected_session_expiry }}"
+    backrefs: false
+  notify: restart nxserver
+
