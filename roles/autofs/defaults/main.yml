@@ -1,0 +1,5 @@
+---
+# defaults file for autofs role
+
+autofs_timeout: 120
+autofs_mount_nfs_default_protocol: 4

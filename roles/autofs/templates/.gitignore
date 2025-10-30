@@ -1,0 +1,5 @@
+# Ignore all autofs templates
+auto.*
+
+# Ignore credentials file
+*creds*

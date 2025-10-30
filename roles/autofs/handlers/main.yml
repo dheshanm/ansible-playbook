@@ -1,0 +1,14 @@
+---
+# handlers file for autofs role
+
+- name: restart autofs
+  ansible.builtin.systemd:
+    name: autofs
+    state: restarted
+  listen: restart autofs
+
+- name: reload autofs
+  ansible.builtin.systemd:
+    name: autofs
+    state: reloaded
+  listen: reload autofs

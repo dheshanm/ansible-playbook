@@ -1,0 +1,92 @@
+---
+# tasks file for autofs role
+
+- name: Install autofs package
+  ansible.builtin.dnf:
+    name: autofs
+    state: present
+  tags:
+    - autofs
+    - packages
+
+- name: Install nfs-utils package
+  ansible.builtin.dnf:
+    name: nfs-utils
+    state: present
+  tags:
+    - autofs
+    - packages
+
+- name: Ensure autofs configuration directory exists
+  ansible.builtin.file:
+    path: /etc/auto.master.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  tags:
+    - autofs
+    - configuration
+
+
+# Gather all autofs templates (auto*) on the control node
+- name: Set autofs_auto_templates fact
+  ansible.builtin.set_fact:
+    autofs_auto_templates: "{{ lookup('ansible.builtin.fileglob', role_path + '/templates/auto*', wantlist=True) }}"
+  tags:
+    - autofs
+    - configuration
+
+
+# Parse mount points from autofs templates on the control node
+- name: Set autofs_mount_points_raw fact (parse mount points locally)
+  ansible.builtin.set_fact:
+    autofs_mount_points_raw: |
+      {{ autofs_auto_templates | map('basename') | map('regex_replace', '^(.*)$', lookup('pipe', 'grep -hE "^/[^ ]+" ' ~ role_path ~ '/templates/' ~ '\1 | awk "{print $1}"')) | list }}
+  tags:
+    - autofs
+    - configuration
+
+- name: Set unique mount points fact
+  ansible.builtin.set_fact:
+    autofs_mount_points: >-
+      {{ autofs_mount_points_raw | flatten | map('regex_replace', '/\\*$', '') | select('match', '^/.+') | unique | list }}
+  tags:
+    - autofs
+    - configuration
+
+- name: Ensure all autofs mount point directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ autofs_mount_points }}"
+  when: item != '-'
+  tags:
+    - autofs
+    - configuration
+
+- name: Deploy all autofs templates (auto*)
+  ansible.builtin.template:
+    src: "{{ item | basename }}"
+    dest: "/etc/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  with_items: "{{ autofs_auto_templates }}"
+  notify: restart autofs
+  tags:
+    - autofs
+    - configuration
+
+- name: Enable and start autofs service
+  ansible.builtin.systemd:
+    name: autofs
+    enabled: yes
+    state: started
+  tags:
+    - autofs
+    - service
