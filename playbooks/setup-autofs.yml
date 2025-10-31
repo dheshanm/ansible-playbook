@@ -1,0 +1,13 @@
+---
+# Playbook to install and configure autofs
+# This playbook sets up automatic NFS and CIFS mounting using autofs.
+
+- name: Install and configure autofs
+  hosts: all
+  become: true
+  
+  roles:
+    - role: autofs
+  
+  tags:
+    - autofs

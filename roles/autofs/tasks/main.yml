@@ -1,6 +1,24 @@
 ---
 # tasks file for autofs role
 
+- name: Install kernel-modules-extra package (for CIFS support)
+  ansible.builtin.dnf:
+    name: kernel-modules-extra
+    state: present
+  tags:
+    - autofs
+    - packages
+
+- name: Ensure cifs kernel module is loaded
+  ansible.builtin.command:
+    cmd: modprobe cifs
+  register: modprobe_cifs_result
+  changed_when: modprobe_cifs_result.rc == 0
+  failed_when: modprobe_cifs_result.rc != 0
+  tags:
+    - autofs
+    - configuration
+
 - name: Install autofs package
   ansible.builtin.dnf:
     name: autofs
@@ -12,6 +30,14 @@
 - name: Install nfs-utils package
   ansible.builtin.dnf:
     name: nfs-utils
+    state: present
+  tags:
+    - autofs
+    - packages
+
+- name: Install cifs-utils package
+  ansible.builtin.dnf:
+    name: cifs-utils
     state: present
   tags:
     - autofs
@@ -90,3 +116,14 @@
   tags:
     - autofs
     - service
+
+- name: Ensure CIFS credentials file is present
+  template:
+    src: cifs_creds
+    dest: /etc/briefcase
+    owner: root
+    group: root
+    mode: '0600'
+  tags:
+    - autofs
+    - configuration
