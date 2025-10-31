@@ -1,0 +1,12 @@
+---
+
+- name: Install NetworkManager-openconnect and GNOME plugin packages
+  ansible.builtin.dnf:
+    name:
+      - NetworkManager-openconnect
+      - NetworkManager-openconnect-gnome
+    state: present
+  tags:
+    - openconnect
+    - packages
+    - gnome

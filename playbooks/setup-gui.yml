@@ -18,3 +18,4 @@
         gnome_set_default_target: true
         gnome_enable_gdm: true
     - nomachine
+    - openconnect
