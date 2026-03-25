@@ -1,0 +1,18 @@
+---
+# handlers file for mail/postfix
+
+- name: restart postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: restarted
+  listen: restart postfix
+
+- name: reload postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: reloaded
+  listen: reload postfix
+
+- name: update aliases
+  ansible.builtin.command: newaliases
+  listen: update aliases

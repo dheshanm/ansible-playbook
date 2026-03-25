@@ -1,0 +1,115 @@
+# Global Postfix configuration file. This file lists only a subset
+# of all parameters. For the syntax, and for a complete parameter
+# list, see the postconf(5) manual page (command: "man 5 postconf").
+#
+# Managed by Ansible - Do not edit manually
+
+# COMPATIBILITY
+compatibility_level = {{ compatibility_level }}
+
+# LOCAL PATHNAME INFORMATION
+queue_directory = {{ queue_directory }}
+command_directory = {{ command_directory }}
+daemon_directory = {{ daemon_directory }}
+data_directory = {{ data_directory }}
+meta_directory = {{ meta_directory }}
+
+# QUEUE AND PROCESS OWNERSHIP
+mail_owner = {{ mail_owner }}
+
+# INTERNET HOST AND DOMAIN NAMES
+myhostname = {{ ansible_fqdn }}
+mydomain = {{ mydomain }}
+
+# SENDING MAIL
+myorigin = {{ myorigin }}
+
+# RECEIVING MAIL
+inet_interfaces = {{ inet_interfaces }}
+inet_protocols = {{ inet_protocols }}
+
+# DESTINATION
+mydestination = {{ mydestination }}
+
+# REJECTING MAIL FOR UNKNOWN LOCAL USERS
+unknown_local_recipient_reject_code = {{ unknown_local_recipient_reject_code }}
+
+# TRUST AND RELAY CONTROL
+{% if mynetworks_style is defined %}
+mynetworks_style = {{ mynetworks_style }}
+{% endif %}
+{% if mynetworks is defined %}
+mynetworks = {{ mynetworks }}
+{% endif %}
+
+# RELAY CONFIGURATION
+{% if relay_domains is defined and relay_domains %}
+relay_domains = {{ relay_domains }}
+{% else %}
+relay_domains =
+{% endif %}
+
+{% if relayhost is defined and relayhost %}
+relayhost = {{ relayhost }}
+{% endif %}
+
+# ALIAS DATABASE
+alias_maps = {{ alias_maps }}
+alias_database = {{ alias_database }}
+
+# SMTP BANNER
+{% if smtpd_banner is defined %}
+smtpd_banner = {{ smtpd_banner }}
+{% endif %}
+
+# TLS PARAMETERS (optional)
+{% if smtpd_use_tls is defined %}
+smtpd_use_tls = {{ smtpd_use_tls }}
+{% endif %}
+{% if smtpd_tls_cert_file is defined %}
+smtpd_tls_cert_file = {{ smtpd_tls_cert_file }}
+{% endif %}
+{% if smtpd_tls_key_file is defined %}
+smtpd_tls_key_file = {{ smtpd_tls_key_file }}
+{% endif %}
+{% if smtpd_tls_security_level is defined %}
+smtpd_tls_security_level = {{ smtpd_tls_security_level }}
+{% endif %}
+
+{% if smtp_tls_security_level is defined %}
+smtp_tls_security_level = {{ smtp_tls_security_level }}
+{% endif %}
+{% if smtp_tls_note_starttls_offer is defined %}
+smtp_tls_note_starttls_offer = {{ smtp_tls_note_starttls_offer }}
+{% endif %}
+
+# SASL AUTHENTICATION (optional)
+{% if smtpd_sasl_auth_enable is defined %}
+smtpd_sasl_auth_enable = {{ smtpd_sasl_auth_enable }}
+{% endif %}
+{% if smtpd_sasl_type is defined %}
+smtpd_sasl_type = {{ smtpd_sasl_type }}
+{% endif %}
+{% if smtpd_sasl_path is defined %}
+smtpd_sasl_path = {{ smtpd_sasl_path }}
+{% endif %}
+{% if smtpd_sasl_security_options is defined %}
+smtpd_sasl_security_options = {{ smtpd_sasl_security_options }}
+{% endif %}
+
+# RECIPIENT RESTRICTIONS
+{% if smtpd_recipient_restrictions is defined %}
+smtpd_recipient_restrictions = {{ smtpd_recipient_restrictions }}
+{% endif %}
+
+# RELAY RESTRICTIONS
+{% if smtpd_relay_restrictions is defined %}
+smtpd_relay_restrictions = {{ smtpd_relay_restrictions }}
+{% endif %}
+
+# ADDITIONAL CUSTOM PARAMETERS
+{% if postfix_additional_config is defined %}
+{% for key, value in postfix_additional_config.items() %}
+{{ key }} = {{ value }}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,12 @@
+---
+# Example playbook for installing and configuring Postfix
+
+- name: Install and configure Postfix mail server
+  hosts: all
+  become: true
+  
+  roles:
+    - role: mail
+      tags:
+        - mail
+        - postfix

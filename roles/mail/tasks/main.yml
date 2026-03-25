@@ -1,0 +1,153 @@
+---
+# tasks file for mail/postfix
+
+- name: Install Postfix
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - postfix
+      - mailx
+      - s-nail
+    state: present
+  tags:
+    - mail
+    - postfix
+
+- name: Stop and disable sendmail if present
+  become: true
+  ansible.builtin.systemd:
+    name: sendmail
+    state: stopped
+    enabled: false
+  failed_when: false
+  tags:
+    - mail
+    - postfix
+
+- name: Ensure Postfix configuration directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/postfix
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  tags:
+    - mail
+    - postfix
+
+- name: Deploy Postfix main.cf configuration
+  become: true
+  ansible.builtin.template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  notify: restart postfix
+  tags:
+    - mail
+    - postfix
+    - config
+
+- name: Deploy Postfix master.cf configuration (if custom template exists)
+  become: true
+  ansible.builtin.template:
+    src: master.cf.j2
+    dest: /etc/postfix/master.cf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  when: postfix_custom_master_cf | default(false)
+  notify: restart postfix
+  tags:
+    - mail
+    - postfix
+    - config
+
+- name: Configure aliases
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/aliases
+    regexp: '^root:'
+    line: "root: {{ postfix_root_alias | default('root@localhost') }}"
+    create: true
+    mode: '0644'
+  when: postfix_root_alias is defined
+  notify: update aliases
+  tags:
+    - mail
+    - postfix
+    - aliases
+
+- name: Update aliases database
+  become: true
+  ansible.builtin.command: newaliases
+  changed_when: false
+  tags:
+    - mail
+    - postfix
+    - aliases
+
+- name: Enable and start Postfix service
+  become: true
+  ansible.builtin.systemd:
+    name: postfix
+    state: started
+    enabled: true
+  tags:
+    - mail
+    - postfix
+
+- name: Check if firewalld is installed and running
+  become: true
+  ansible.builtin.systemd:
+    name: firewalld
+  register: firewalld_service
+  failed_when: false
+  when: postfix_configure_firewall | default(true)
+  tags:
+    - mail
+    - postfix
+    - firewall
+
+- name: Install python3-firewall for firewalld management
+  become: true
+  ansible.builtin.dnf:
+    name: python3-firewall
+    state: present
+  when:
+    - postfix_configure_firewall | default(true)
+    - firewalld_service.status is defined
+    - firewalld_service.status.ActiveState == "active"
+  tags:
+    - mail
+    - postfix
+    - firewall
+
+- name: Configure firewall for SMTP (port 25)
+  become: true
+  ansible.posix.firewalld:
+    service: smtp
+    permanent: true
+    state: enabled
+    immediate: true
+  when:
+    - postfix_configure_firewall | default(true)
+    - firewalld_service.status is defined
+    - firewalld_service.status.ActiveState == "active"
+  tags:
+    - mail
+    - postfix
+    - firewall
+
+- name: Validate Postfix configuration
+  become: true
+  ansible.builtin.command: postfix check
+  changed_when: false
+  tags:
+    - mail
+    - postfix
+    - validate

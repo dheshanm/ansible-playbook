@@ -1,0 +1,5 @@
+- name: Setup baseline++ configuration
+  hosts: all
+  roles:
+    - kanidm
+    - mail

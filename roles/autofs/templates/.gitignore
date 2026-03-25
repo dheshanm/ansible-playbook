@@ -1,5 +1,6 @@
 # Ignore all autofs templates
 auto.*
+*.bkp
 
 # Ignore credentials file
 *creds*

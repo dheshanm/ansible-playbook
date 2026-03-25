@@ -1,0 +1,53 @@
+---
+# defaults file for mail/postfix
+
+# Relay configuration
+relayhost: "{{ mail_relayhost | default('') }}"
+relay_domains: "{{ mail_relay_domains | default('') }}"
+
+# Network configuration
+inet_interfaces: all
+inet_protocols: all
+
+# Domain configuration
+mydomain: "{{ mail_domain | default('') }}"
+myorigin: "$myhostname"
+
+# Destination configuration
+mydestination: "$myhostname, localhost.$mydomain, localhost"
+
+# Network trust
+mynetworks_style: host
+# mynetworks: "127.0.0.0/8, 168.100.3.0/28"
+
+# Compatibility
+compatibility_level: "3.8"
+
+# Alias configuration
+alias_maps: "lmdb:/etc/aliases"
+alias_database: "lmdb:/etc/aliases"
+
+# Optional: Root email alias
+# postfix_root_alias: "admin@example.com"
+
+# Firewall configuration
+postfix_configure_firewall: true
+
+# Custom master.cf template
+postfix_custom_master_cf: false
+
+# Queue and directory settings
+queue_directory: "/var/spool/postfix"
+command_directory: "/usr/sbin"
+daemon_directory: "/usr/libexec/postfix"
+data_directory: "/var/lib/postfix"
+meta_directory: "/etc/postfix"
+
+# Process ownership
+mail_owner: "postfix"
+
+# Recipient settings
+unknown_local_recipient_reject_code: 550
+
+# Banner
+smtpd_banner: "$myhostname ESMTP"

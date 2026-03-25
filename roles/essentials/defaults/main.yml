@@ -8,4 +8,8 @@ essentials_packages:
   - pcp
   - python3-pcp
   - htop
-
+  - libquadmath
+  - libgfortran
+  - libXmu
+  - libxcrypt-compat
+  
