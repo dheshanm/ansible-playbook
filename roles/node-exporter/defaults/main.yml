@@ -1,0 +1,29 @@
+---
+# Prometheus Node Exporter version to install
+node_exporter_version: "1.10.2"
+
+# Listen address for the exporter HTTP endpoint
+node_exporter_web_listen_address: "0.0.0.0:9100"
+
+# Metrics path
+node_exporter_web_telemetry_path: "/metrics"
+
+# Collectors to enable in addition to defaults.
+# systemd: expose systemd unit states
+# textfile: allow pushing custom metrics via flat files
+node_exporter_enabled_collectors:
+  - systemd
+  - textfile:
+      directory: "{{ node_exporter_textfile_dir }}"
+
+# Directory for the textfile collector; writable by members of the node-exp group
+node_exporter_textfile_dir: "/var/lib/node_exporter"
+
+# Log level: debug | info | warn | error
+node_exporter_log_level: "info"
+
+# Log format: logfmt | json
+node_exporter_log_format: "logfmt"
+
+# Firewall port opened on the managed host (must match the listen address above)
+node_exporter_firewall_port: "9100/tcp"

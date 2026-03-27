@@ -1,0 +1,12 @@
+---
+# Nvidia GPU exporter version to install
+nvidia_gpu_exporter_version: "1.4.1"
+
+# Listen address for the exporter HTTP endpoint
+nvidia_gpu_exporter_web_listen_address: "0.0.0.0:9835"
+
+# Metrics path
+nvidia_gpu_exporter_web_telemetry_path: "/metrics"
+
+# Firewall port opened on the managed host (must match the listen address above)
+nvidia_gpu_exporter_firewall_port: "9835/tcp"

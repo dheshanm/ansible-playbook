@@ -1,0 +1,24 @@
+---
+# Install and configure node_exporter via the upstream community collection role.
+# All node_exporter_* variables are passed through automatically because they
+# share the same namespace; override them in group_vars/host_vars as needed.
+
+- name: Deploy node exporter
+  ansible.builtin.include_role:
+    name: prometheus.prometheus.node_exporter
+  tags: node_exporter
+
+# ── Firewall ──────────────────────────────────────────────────────────────────
+# Open the scrape port so Prometheus can reach the exporter.
+# Requires the ansible.posix collection (already in requirements.yml).
+
+- name: Allow node_exporter port through firewalld
+  become: true
+  ansible.posix.firewalld:
+    port: "{{ node_exporter_firewall_port }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  tags:
+    - node_exporter
+    - firewall

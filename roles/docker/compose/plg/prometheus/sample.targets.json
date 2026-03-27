@@ -1,0 +1,56 @@
+[
+    {
+        "targets": [
+            "pnl-nlp.partners.org:9100",
+            "pnl-titan.partners.org:9100",
+            "pnl-oracle.partners.org:9100",
+            "pnl-predict.partners.org:9100",
+            "pnl-axon.partners.org:9100"
+        ],
+        "labels": {
+            "job": "server_metrics",
+            "os": "rocky9",
+            "env": "pnl_server"
+        }
+    },
+        {
+        "targets": [
+            "pnl-x90-7.partners.org:9100",
+            "pnl-x90-8.partners.org:9100",
+            "pnl-x90-9.partners.org:9100",
+            "pnl-x90-10.partners.org:9100"
+        ],
+        "labels": {
+            "job": "server_metrics",
+            "os": "rocky9",
+            "env": "pnl_workstation"
+        }
+    },
+    {
+        "targets": [
+            "pnl-nlp.partners.org:9835",
+            "pnl-titan.partners.org:9835",
+            "pnl-oracle.partners.org:9835",
+            "pnl-predict.partners.org:9835",
+            "pnl-axon.partners.org:9835"
+        ],
+        "labels": {
+            "job": "nvidia_gpu_metrics",
+            "os": "rocky9",
+            "env": "pnl_server"
+        }
+    },
+    {
+        "targets": [
+            "pnl-x90-7.partners.org:9835",
+            "pnl-x90-8.partners.org:9835",
+            "pnl-x90-9.partners.org:9835",
+            "pnl-x90-10.partners.org:9835"
+        ],
+        "labels": {
+            "job": "nvidia_gpu_metrics",
+            "os": "rocky9",
+            "env": "pnl_workstation"
+        }
+    }
+]

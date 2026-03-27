@@ -1,0 +1,767 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "filterable": false,
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Total RAM"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "sum"
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 128
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "CPU %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            },
+                            {
+                                "id": "min",
+                                "value": 0
+                            },
+                            {
+                                "id": "max",
+                                "value": 100
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "lcd",
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "mean"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "RAM Use %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            },
+                            {
+                                "id": "min",
+                                "value": 0
+                            },
+                            {
+                                "id": "max",
+                                "value": 100
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "lcd",
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "mean"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "# Cores"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "sum"
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 96
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Server"
+                        },
+                        "properties": [
+                            {
+                                "id": "filterable",
+                                "value": false
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 128
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 11,
+                "w": 9,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "cellHeight": "sm",
+                "frameIndex": 2,
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": false,
+                        "displayName": "Server"
+                    }
+                ]
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance) (100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\", instance=~\"$node:.*\"}[5m])) * 100)), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance) (node_memory_MemTotal_bytes{instance=~\"$node:.*\"}), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance) (100 * (1 - (node_memory_MemAvailable_bytes{instance=~\"$node:.*\"} / node_memory_MemTotal_bytes{instance=~\"$node:.*\"}))), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "label_replace(count by (instance) (node_cpu_seconds_total{mode=\"idle\", instance=~\"$node:.*\"}), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "D"
+                }
+            ],
+            "title": "Node Overview",
+            "transformations": [
+                {
+                    "id": "joinByField",
+                    "options": {
+                        "byField": "instance",
+                        "mode": "outerTabular"
+                    }
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "Time 1": true,
+                            "Time 2": true,
+                            "Time 3": true,
+                            "Time 4": true
+                        },
+                        "includeByName": {},
+                        "indexByName": {
+                            "Time 1": 2,
+                            "Time 2": 4,
+                            "Time 3": 6,
+                            "Time 4": 8,
+                            "Value #A": 3,
+                            "Value #B": 5,
+                            "Value #C": 7,
+                            "Value #D": 1,
+                            "instance": 0
+                        },
+                        "renameByName": {
+                            "Time 2": "",
+                            "Value #A": "CPU %",
+                            "Value #B": "Total RAM",
+                            "Value #C": "RAM Use %",
+                            "Value #D": "# Cores",
+                            "instance": "Server"
+                        }
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Compute %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "min",
+                                "value": 0
+                            },
+                            {
+                                "id": "max",
+                                "value": 100
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "lcd",
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "mean"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Total VRAM"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "sum"
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 128
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Used VRAM"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "VRAM %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "lcd",
+                                    "type": "gauge",
+                                    "valueDisplayMode": "text"
+                                }
+                            },
+                            {
+                                "id": "min",
+                                "value": 0
+                            },
+                            {
+                                "id": "max",
+                                "value": 100
+                            },
+                            {
+                                "id": "custom.footer.reducers",
+                                "value": [
+                                    "mean"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byType",
+                            "options": "string"
+                        },
+                        "properties": [
+                            {
+                                "id": "filterable"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Server"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 128
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "GPU #"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 64
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 11,
+                "w": 15,
+                "x": 9,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "cellHeight": "sm",
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": false,
+                        "displayName": "Server"
+                    },
+                    {
+                        "desc": false,
+                        "displayName": "GPU #"
+                    }
+                ]
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "builder",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance, uuid) (nvidia_smi_utilization_gpu_ratio{instance=~\"$node:.*\"} * 100), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "builder",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance, uuid) (nvidia_smi_memory_total_bytes{instance=~\"$node:.*\"}), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "builder",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance, uuid) (nvidia_smi_memory_used_bytes{instance=~\"$node:.*\"}), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "builder",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance, uuid) (nvidia_smi_utilization_memory_ratio{instance=~\"$node:.*\"} * 100), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance, uuid, name) (nvidia_smi_gpu_info{instance=~\"$node:.*\"}), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "E"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "builder",
+                    "exemplar": false,
+                    "expr": "label_replace(max by (instance, uuid) (nvidia_smi_index{instance=~\"$node:.*\"}), \"instance\", \"$1\", \"instance\", \"^([^.:]+).*\")",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "F"
+                }
+            ],
+            "title": "GPU Table",
+            "transformations": [
+                {
+                    "id": "joinByField",
+                    "options": {
+                        "byField": "uuid",
+                        "mode": "outerTabular"
+                    }
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "Time 1": true,
+                            "Time 2": true,
+                            "Time 3": true,
+                            "Time 4": true,
+                            "Time 5": true,
+                            "Time 6": true,
+                            "Value #C": true,
+                            "Value #E": true,
+                            "instance 1": false,
+                            "instance 2": true,
+                            "instance 3": true,
+                            "instance 4": true,
+                            "instance 5": true,
+                            "instance 6": true,
+                            "uuid": true
+                        },
+                        "includeByName": {},
+                        "indexByName": {
+                            "Time 1": 2,
+                            "Time 2": 6,
+                            "Time 3": 9,
+                            "Time 4": 12,
+                            "Time 5": 15,
+                            "Time 6": 18,
+                            "Value #A": 5,
+                            "Value #B": 8,
+                            "Value #C": 11,
+                            "Value #D": 14,
+                            "Value #E": 17,
+                            "Value #F": 3,
+                            "instance 1": 0,
+                            "instance 2": 7,
+                            "instance 3": 10,
+                            "instance 4": 13,
+                            "instance 5": 16,
+                            "instance 6": 19,
+                            "name": 4,
+                            "uuid": 1
+                        },
+                        "renameByName": {
+                            "Value #A": "Compute %",
+                            "Value #B": "Total VRAM",
+                            "Value #C": "Used VRAM",
+                            "Value #D": "VRAM %",
+                            "Value #F": "GPU #",
+                            "instance 1": "Server",
+                            "name": "GPU Name"
+                        }
+                    }
+                }
+            ],
+            "type": "table"
+        }
+    ],
+    "preload": false,
+    "schemaVersion": 42,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "allValue": ".*",
+                "current": {
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PBFA97CFB590B2093"
+                },
+                "definition": "label_values(node_cpu_seconds_total, instance)",
+                "includeAll": true,
+                "label": "Node",
+                "name": "node",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(node_cpu_seconds_total, instance)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "/([^:]+):.*/",
+                "regexApplyTo": "value",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "baseFilters": [],
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PBFA97CFB590B2093"
+                },
+                "filters": [],
+                "name": "Filters",
+                "type": "adhoc"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-30m",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Nodes Overview",
+    "uid": "dm7f6rc",
+    "version": 28,
+    "weekStart": ""
+}

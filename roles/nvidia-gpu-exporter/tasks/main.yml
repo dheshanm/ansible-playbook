@@ -1,0 +1,22 @@
+---
+# Deploy nvidia_gpu_exporter via the upstream community collection role.
+# All nvidia_gpu_exporter_* variables are passed through automatically because
+# they share the same namespace; override them in group_vars/host_vars as needed.
+
+- name: Deploy Nvidia GPU exporter
+  ansible.builtin.include_role:
+    name: prometheus.prometheus.nvidia_gpu_exporter
+  tags: nvidia_gpu_exporter
+
+# ── Firewall ──────────────────────────────────────────────────────────────────
+
+- name: Allow nvidia_gpu_exporter port through firewalld
+  become: true
+  ansible.posix.firewalld:
+    port: "{{ nvidia_gpu_exporter_firewall_port }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  tags:
+    - nvidia_gpu_exporter
+    - firewall

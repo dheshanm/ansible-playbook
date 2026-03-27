@@ -1,0 +1,5 @@
+---
+- name: Install Prometheus Nvidia GPU Exporter
+  hosts: all
+  roles:
+    - nvidia-gpu-exporter
