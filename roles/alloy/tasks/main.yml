@@ -1,0 +1,26 @@
+---
+# Deploy Grafana Alloy via the upstream grafana.grafana collection role,
+# then drop a custom config and open the firewall port.
+
+- name: Render Alloy config into a variable
+  ansible.builtin.set_fact:
+    alloy_config: "{{ lookup('template', 'config.alloy.j2') }}"
+  tags: alloy
+
+- name: Deploy Grafana Alloy
+  ansible.builtin.include_role:
+    name: grafana.grafana.alloy
+  tags: alloy
+
+# ── Firewall ──────────────────────────────────────────────────────────────────
+
+- name: Allow Alloy UI port through firewalld
+  become: true
+  ansible.posix.firewalld:
+    port: "{{ alloy_firewall_port }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  tags:
+    - alloy
+    - firewall

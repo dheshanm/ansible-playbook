@@ -1,0 +1,40 @@
+// ── Log collection ────────────────────────────────────────────────────────────
+// Read all units from the systemd journal and forward to Loki.
+
+loki.source.journal "system" {
+  forward_to    = [loki.write.default.receiver]
+  max_age       = "12h"
+  relabel_rules = loki.relabel.journal.rules
+  labels = {
+    job  = "journal",
+{% for key, value in alloy_extra_labels.items() %}
+    {{ key }} = "{{ value }}",
+{% endfor %}
+  }
+}
+
+// Promote the systemd unit name and priority to top-level labels so Grafana
+// can filter by service and severity without parsing the log line itself.
+loki.relabel "journal" {
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "host"
+  }
+  forward_to = []
+}
+
+// ── Loki write ────────────────────────────────────────────────────────────────
+
+loki.write "default" {
+  endpoint {
+    url = "{{ alloy_loki_url }}"
+  }
+}

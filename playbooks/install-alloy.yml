@@ -1,0 +1,6 @@
+---
+- name: Install Grafana Alloy (log shipper → Loki)
+  hosts: all
+  become: true
+  roles:
+    - alloy

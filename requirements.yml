@@ -3,3 +3,4 @@ collections:
   - name: ansible.posix
   - name: prometheus.prometheus
     version: "0.28.0"
+  - name: grafana.grafana

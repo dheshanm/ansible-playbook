@@ -1,0 +1,13 @@
+---
+# Grafana Alloy version to install — set to a specific tag (e.g. "v1.8.0") or
+# leave unset to let the upstream grafana.grafana.alloy role use "latest".
+# alloy_version: "v1.8.0"
+
+# Firewall port for Alloy's built-in UI / metrics endpoint
+alloy_firewall_port: "12345/tcp"
+
+# Loki push endpoint — override per-inventory in group_vars
+alloy_loki_url: "http://{{ loki_host }}:3100/loki/api/v1/push"
+
+# Extra labels added to every log stream shipped by this host
+alloy_extra_labels: {}
