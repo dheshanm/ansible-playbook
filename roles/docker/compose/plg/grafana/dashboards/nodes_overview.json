@@ -750,6 +750,24 @@
                             "name": "GPU Name"
                         }
                     }
+                },
+                {
+                    "id": "filterByValue",
+                    "options": {
+                        "filters": [
+                            {
+                                "config": {
+                                    "id": "greaterOrEqual",
+                                    "options": {
+                                        "value": 8589934592
+                                    }
+                                },
+                                "fieldName": "Total VRAM"
+                            }
+                        ],
+                        "match": "any",
+                        "type": "include"
+                    }
                 }
             ],
             "type": "table"
