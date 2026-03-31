@@ -14,3 +14,19 @@ scrape_configs:
       - files:
         - '/etc/prometheus/targets.json'
         refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [job]
+        regex: process_metrics
+        action: drop
+
+  - job_name: 'process_metrics'
+    scrape_interval: 30s
+    scrape_timeout: 25s
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/targets.json'
+        refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [job]
+        regex: process_metrics
+        action: keep
