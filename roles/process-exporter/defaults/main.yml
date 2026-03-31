@@ -1,0 +1,12 @@
+---
+# Prometheus Process Exporter version to install
+process_exporter_version: "0.8.7"
+
+# Listen address for the exporter HTTP endpoint
+process_exporter_web_listen_address: "0.0.0.0:9256"
+
+# Metrics path
+process_exporter_web_telemetry_path: "/metrics"
+
+# Firewall port opened on the managed host (must match the listen address above)
+process_exporter_firewall_port: "9256/tcp"

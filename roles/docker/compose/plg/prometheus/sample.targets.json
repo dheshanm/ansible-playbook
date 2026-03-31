@@ -52,5 +52,19 @@
             "os": "rocky9",
             "env": "pnl_workstation"
         }
+    },
+    {
+        "targets": [
+            "pnl-nlp.partners.org:9256",
+            "pnl-titan.partners.org:9256",
+            "pnl-oracle.partners.org:9256",
+            "pnl-predict.partners.org:9256",
+            "pnl-axon.partners.org:9256"
+        ],
+        "labels": {
+            "job": "process_metrics",
+            "os": "rocky9",
+            "env": "pnl_server"
+        }
     }
 ]

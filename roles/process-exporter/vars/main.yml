@@ -1,0 +1,95 @@
+---
+# Processes to monitor — whitelist important services individually.
+# Uses only comm-based matching (reads /proc/PID/stat — very cheap).
+# No catch-all: unmatched processes are simply not tracked.
+#
+# NOTE: This must be a multi-line string, NOT a YAML list, because the
+# upstream collection template dumps it verbatim into the config file.
+#
+# NOTE: This lives in vars/ (not defaults/) so it takes precedence over the
+# collection role's own defaults when loaded via include_role.
+# Override in group_vars / host_vars to add site-specific processes.
+process_exporter_names: "[{name: '{{.Comm}}', cmdline: [.+]}]"
+# process_exporter_names: |
+#   # ── Monitoring stack ──────────────────────────────────────
+#   - name: "alloy"
+#     comm:
+#       - alloy
+#   - name: "node_exporter"
+#     comm:
+#       - node_exporter
+#   - name: "nvidia_gpu_exporter"
+#     comm:
+#       - nvidia_gpu_expo
+#   - name: "process_exporter"
+#     comm:
+#       - process-exporte
+#   # ── Security / audit ──────────────────────────────────────
+#   - name: "splunkd"
+#     comm:
+#       - splunkd
+#   - name: "falcon"
+#     comm:
+#       - falcond
+#       - falcon-sensor-b
+#   - name: "auditd"
+#     comm:
+#       - auditd
+#   # ── Core system services ──────────────────────────────────
+#   - name: "sshd"
+#     comm:
+#       - sshd
+#   - name: "chronyd"
+#     comm:
+#       - chronyd
+#   - name: "firewalld"
+#     comm:
+#       - firewalld
+#   - name: "postfix"
+#     comm:
+#       - master
+#       - pickup
+#       - qmgr
+#       - tlsmgr
+#   - name: "sssd"
+#     comm:
+#       - sssd
+#       - sssd_be
+#       - sssd_nss
+#       - sssd_pam
+#       - sssd_kcm
+#       - sssd_pac
+#   - name: "automount"
+#     comm:
+#       - automount
+#   - name: "systemd"
+#     comm:
+#       - systemd
+#       - systemd-journal
+#       - systemd-logind
+#       - systemd-udevd
+#   - name: "docker"
+#     comm:
+#       - dockerd
+#       - containerd
+#   # ── Compute workloads ─────────────────────────────────────
+#   - name: "matlab"
+#     comm:
+#       - MATLAB
+#       - MATLABWebUI
+#       - MathWorksServic
+#       - matlab_helper
+#       - mwdocsearch
+#   - name: "ants"
+#     comm:
+#       - antsRegistratio
+#       - antsMultivariat
+#       - ANTSpexec.sh
+#   - name: "python"
+#     comm:
+#       - python
+#       - python3
+#       - python3.10
+#   - name: "node"
+#     comm:
+#       - node

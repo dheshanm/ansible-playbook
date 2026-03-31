@@ -1,0 +1,22 @@
+---
+# Deploy process_exporter via the upstream community collection role.
+# All process_exporter_* variables are passed through automatically because
+# they share the same namespace; override them in group_vars/host_vars as needed.
+
+- name: Deploy Process exporter
+  ansible.builtin.include_role:
+    name: prometheus.prometheus.process_exporter
+  tags: process_exporter
+
+# ── Firewall ──────────────────────────────────────────────────────────────────
+
+- name: Allow process_exporter port through firewalld
+  become: true
+  ansible.posix.firewalld:
+    port: "{{ process_exporter_firewall_port }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  tags:
+    - process_exporter
+    - firewall

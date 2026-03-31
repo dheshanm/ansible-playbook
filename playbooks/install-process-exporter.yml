@@ -1,0 +1,5 @@
+---
+- name: Install Prometheus Process Exporter
+  hosts: all
+  roles:
+    - process-exporter
