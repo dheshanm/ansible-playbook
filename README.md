@@ -37,7 +37,8 @@ To run a playbook, use the following command:
 Ensure you have Ansible installed and configured correctly, and that you have the necessary permissions to execute the playbooks on the target hosts. 
 
 ```bash
-ansible-playbook -i inventories/dev/hosts.yml playbooks/setup-baseline.yml
+ansible-galaxy collection install -r requirements.yml
+ansible-playbook -i inventories/dev/hosts.yml playbooks/setup-baseline.yml -K -l <host>
 ```
 
 
