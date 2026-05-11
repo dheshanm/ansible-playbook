@@ -9,7 +9,7 @@
 # NOTE: This lives in vars/ (not defaults/) so it takes precedence over the
 # collection role's own defaults when loaded via include_role.
 # Override in group_vars / host_vars to add site-specific processes.
-process_exporter_names: "[{name: '{{.Comm}}', cmdline: [.+]}]"
+process_exporter_names: "[{name: '{{ \"{{.Comm}}\" }}', cmdline: [.+]}]"
 # process_exporter_names: |
 #   # ── Monitoring stack ──────────────────────────────────────
 #   - name: "alloy"
